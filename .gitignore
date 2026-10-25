@@ -5,3 +5,5 @@ __pycache__/
 demo/sessions/
 .agents/skills/verify-storefront/evidence/launch/
 demo/out/
+demo/video/node_modules/
+demo/video/public/out
