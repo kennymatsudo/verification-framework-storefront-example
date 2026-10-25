@@ -4,3 +4,4 @@ __pycache__/
 .pytest_cache/
 demo/sessions/
 .agents/skills/verify-storefront/evidence/launch/
+demo/out/

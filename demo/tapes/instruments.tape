@@ -10,7 +10,7 @@ Set Theme "Catppuccin Latte"
 Set TypingSpeed 40ms
 
 Hide
-Type "cd ~/projects/storefront && clear"
+Type "cd ~/projects/storefront && setopt interactive_comments && clear"
 Enter
 Sleep 500ms
 Show
@@ -20,8 +20,11 @@ Enter
 Type `python3 .agents/skills/verify-storefront/scripts/framework/vf.py start --until "python3 .agents/skills/verify-storefront/scripts/doctor.py" -- .agents/skills/verify-storefront/scripts/serve.sh`
 Enter
 Sleep 6s
-Type "clear"
+Hide
+Type "curl -s -X POST -d product_id=2 127.0.0.1:8800/cart/add >/dev/null; curl -s -X POST -d product_id=2 127.0.0.1:8800/cart/add >/dev/null; curl -s -X POST -d product_id=5 127.0.0.1:8800/cart/add >/dev/null; clear"
 Enter
+Sleep 1s
+Show
 Type "# A probe reads the databases directly. It never asks the app."
 Enter
 Type "python3 .agents/skills/verify-storefront/scripts/probe.py cart"
@@ -30,7 +33,7 @@ Sleep 2500ms
 Type "python3 .agents/skills/verify-storefront/scripts/probe.py order 1"
 Enter
 Sleep 3s
-Type "python3 .agents/skills/verify-storefront/scripts/probe.py charge $(python3 .agents/skills/verify-storefront/scripts/probe.py order 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)[\"charge_id\"])')"
+Type `python3 .agents/skills/verify-storefront/scripts/probe.py charge $(python3 .agents/skills/verify-storefront/scripts/probe.py order 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["charge_id"])')`
 Enter
 Sleep 3500ms
 Type "clear"
