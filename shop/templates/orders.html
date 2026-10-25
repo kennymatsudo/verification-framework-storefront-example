@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Orders · Northwind Goods{% endblock %}
+{% block content %}
+<h1>Your orders</h1>
+{% if orders %}
+<table class="lines">
+  <thead><tr><th>Order</th><th>Placed</th><th>Status</th><th>Total</th></tr></thead>
+  <tbody>
+    {% for order in orders %}
+    <tr data-order-id="{{ order.id }}">
+      <td><a href="/orders/{{ order.id }}">#{{ order.id }}</a></td>
+      <td>{{ order.placed_at | when }}</td>
+      <td><span class="status status-{{ order.status }}" data-status>{{ order.status }}</span></td>
+      <td>{{ order.total_cents | money }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No orders yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Shop</h1>
+<ul class="products">
+  {% for product in products %}
+  <li class="product" data-product-id="{{ product.id }}">
+    <div class="swatch" style="background: {{ product.tint }}"></div>
+    <h2>{{ product.name }}</h2>
+    <p class="description">{{ product.description }}</p>
+    <form method="post" action="/cart/add" class="row">
+      <span class="price">{{ product.price_cents | money }}</span>
+      <input type="hidden" name="product_id" value="{{ product.id }}">
+      <button type="submit">Add to cart</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

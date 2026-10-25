@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} · Northwind Goods{% endblock %}
+{% block content %}
+<h1>Order #{{ order.id }}</h1>
+<p class="lead">
+  <span class="status status-{{ order.status }}" data-status>{{ order.status }}</span>
+  {% if order.status == "paid" %}Thanks, {{ customer.name.split(' ')[0] }}. Your payment went through.{% endif %}
+</p>
+<table class="lines">
+  <tbody>
+    {% for line in lines %}
+    <tr><td>{{ line.name }} × {{ line.quantity }}</td><td>{{ line.line_cents | money }}</td></tr>
+    {% endfor %}
+  </tbody>
+  <tfoot><tr><th>Total</th><th data-order-total>{{ order.total_cents | money }}</th></tr></tfoot>
+</table>
+<p class="meta">Placed {{ order.placed_at | when }}{% if order.charge_id %} · Payment {{ order.charge_id }}{% endif %}</p>
+<p><a href="/">Keep shopping</a></p>
+{% endblock %}

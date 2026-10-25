@@ -1,0 +1,58 @@
+:root {
+  --ink: #1f2328;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --paper: #fbfaf7;
+  --accent: #1d4ed8;
+  --ok: #15803d;
+  --warn: #b45309;
+  --bad: #b91c1c;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); }
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 28px; margin: 8px 0 20px; }
+h2 { font-size: 18px; margin: 12px 0 8px; }
+a { color: var(--accent); }
+.topbar {
+  display: flex; align-items: center; gap: 24px; padding: 12px 24px;
+  background: white; border-bottom: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; font-size: 18px; }
+.topbar nav { display: flex; gap: 16px; flex: 1; }
+.topbar nav a { color: var(--ink); text-decoration: none; }
+.badge {
+  display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px; text-align: center;
+  background: var(--accent); color: white; font-size: 12px; line-height: 20px;
+}
+.customer { color: var(--muted); font-size: 14px; }
+.products { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.product { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.product h2 { margin: 12px 0 4px; }
+.swatch { height: 120px; border-radius: 8px; }
+.description { color: var(--muted); margin: 0 0 12px; font-size: 14px; }
+.row { display: flex; align-items: center; justify-content: space-between; }
+.price { font-weight: 600; }
+button, .button {
+  background: var(--accent); color: white; border: 0; border-radius: 6px; padding: 8px 14px;
+  font: inherit; cursor: pointer; text-decoration: none; display: inline-block;
+}
+button.link { background: none; color: var(--muted); padding: 0; text-decoration: underline; }
+table.lines { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--line); border-radius: 10px; }
+table.lines th, table.lines td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+table.lines th:last-child, table.lines td:last-child { text-align: right; }
+table.lines tfoot th { border-bottom: 0; font-size: 16px; }
+.actions { margin-top: 20px; }
+.columns { display: grid; gap: 32px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .columns { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; gap: 12px; } }
+.card-form label { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
+.card-form input { display: block; width: 100%; margin-top: 4px; padding: 8px 10px; font: inherit; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); }
+.error { background: #fef2f2; color: var(--bad); border: 1px solid #fecaca; padding: 10px 12px; border-radius: 6px; }
+.status { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 13px; text-transform: capitalize; background: var(--line); }
+.status-paid { background: #dcfce7; color: var(--ok); }
+.status-pending { background: #fef3c7; color: var(--warn); }
+.status-declined, .status-failed { background: #fee2e2; color: var(--bad); }
+.lead { font-size: 18px; }
+.meta, .empty { color: var(--muted); }
