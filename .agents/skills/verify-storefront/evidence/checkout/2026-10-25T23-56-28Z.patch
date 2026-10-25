@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index 87dc0b5c8ae3caa405eb47de8281dcd2b678f3f4..69cb7bf6cdaa78813ade62bbeef4762823787fd4 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -85,7 +85,7 @@ def create_app(repository: db.Repository | None = None, payments: PaymentsClient
+         total_cents = sum(line["line_cents"] for line in lines)
+         order_id = repository.create_order(customer_id, lines, total_cents)
+         try:
+-            charge = request.app.state.payments.charge(total_cents, card_number, expiry, name_on_card)
++            charge = request.app.state.payments.charge(lines[0]["line_cents"], card_number, expiry, name_on_card)
+         except PaymentsUnavailable:
+             repository.set_order_status(order_id, "failed")
+             return render(
