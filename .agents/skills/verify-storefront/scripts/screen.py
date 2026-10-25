@@ -4,6 +4,10 @@ Needs Playwright for Python and its Chromium in the interpreter running the chec
 playwright && python3 -m playwright install chromium`). Every run records video; the video is kept in the run
 folder only when the run failed or VERIFY_KEEP_RECORDING=1. Console output and failed requests are always
 saved as console.json and requests.json. Each user action adds an `action` mark to the report.
+
+VERIFY_SLOW_MO_MS=<milliseconds> pauses that long before every browser operation, so a recording can be
+followed by eye; a local run is otherwise over too fast to watch. It changes pacing only, never what a check
+does or reads. Unset or 0 runs at full speed.
 """
 
 import json
@@ -17,6 +21,17 @@ except ImportError:  # reported by Screen.__enter__ as a stopped run
     sync_playwright = None
 
 
+def slow_mo_ms():
+    """The pause before each browser operation from VERIFY_SLOW_MO_MS, or 0. Raises ValueError on a non-number."""
+    value = os.environ.get("VERIFY_SLOW_MO_MS", "").strip()
+    if not value:
+        return 0
+    ms = int(value)
+    if ms < 0:
+        raise ValueError(f"VERIFY_SLOW_MO_MS must be 0 or more, got {ms}")
+    return ms
+
+
 class Screen:
     def __init__(self, report):
         self.report = report
@@ -26,7 +41,7 @@ class Screen:
         if sync_playwright is None:
             self.report.stop("Playwright for Python is not installed for this python3; see screen.py")
         self._playwright = sync_playwright().start()
-        self._browser = self._playwright.chromium.launch()
+        self._browser = self._playwright.chromium.launch(slow_mo=slow_mo_ms())
         self._video_dir = self.report.run_dir / "video-parts"
         self.video_starts_at = self.report.at()
         self._context = self._browser.new_context(

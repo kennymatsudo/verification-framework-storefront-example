@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..15b577d84aa566c9503427713a76c4ab5d78b5e8 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -135,7 +135,7 @@ def create_app(
+         if charge.status != "succeeded":
+             repository.set_order_status(order_id, "declined", charge.id)
+             return render_checkout(request, lines, total_cents, "Your card was declined. Please try another card.")
+-        repository.set_order_status(order_id, "paid", charge.id)
++        repository.set_order_status(order_id, "paid")
+         if saved_card is None and save_card and charge.card_id:
+             year, month = parse_expiry(expiry)
+             last4 = card_number.replace(" ", "")[-4:]

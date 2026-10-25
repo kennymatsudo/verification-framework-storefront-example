@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..a0d751458b1bf0172cf95efc51088e923027a29a 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -106,7 +106,7 @@ def create_app(
+         payments = request.app.state.payments
+         lines = repository.cart(customer_id)
+         if not lines:
+-            return RedirectResponse("/cart", status_code=303)
++            pass
+         total_cents = sum(line["line_cents"] for line in lines)
+ 
+         saved_card = None

@@ -1,0 +1,447 @@
+{
+  "check": "saved-cards",
+  "sub_features": [
+    "saved-cards.save",
+    "saved-cards.pay",
+    "saved-cards.expired",
+    "saved-cards.remove"
+  ],
+  "passed": false,
+  "reads": "what the user sees and stored state",
+  "steps": [
+    {
+      "name": "the declining card was declined",
+      "passed": true,
+      "at": 0.66,
+      "sub_features": [],
+      "detail": "orders from this attempt [(15, 'declined')]"
+    },
+    {
+      "name": "a declined card is not saved",
+      "passed": true,
+      "at": 0.67,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "payment attempted True; shop saved cards from this run [], new payments cards 0"
+    },
+    {
+      "name": "the unticked payment went through",
+      "passed": true,
+      "at": 0.88,
+      "sub_features": [],
+      "detail": "paid orders from this attempt [16]"
+    },
+    {
+      "name": "a card is not saved unless the customer asks",
+      "passed": true,
+      "at": 0.88,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "payment attempted True; shop saved cards from this run [], new payments cards 0"
+    },
+    {
+      "name": "saving the current card stores its last four and expiry",
+      "passed": true,
+      "at": 1.06,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "shop stores card 3 ending 4444 expiring 10/26, wanted 4444 10/26; payments holds {'id': 'card_db02ea9d476f', 'last4': '4444', 'expiry': '10/26', 'name': 'Mira Okafor'}",
+      "evidence": {
+        "saved_card_id": 3
+      }
+    },
+    {
+      "name": "saving the expired card stores its last four and expiry",
+      "passed": true,
+      "at": 1.24,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "shop stores card 4 ending 1111 expiring 09/26, wanted 1111 09/26; payments holds {'id': 'card_6260df177562', 'last4': '1111', 'expiry': '09/26', 'name': 'Mira Okafor'}",
+      "evidence": {
+        "saved_card_id": 4
+      }
+    },
+    {
+      "name": "the shop stores no full card number",
+      "passed": false,
+      "at": 1.32,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "shop columns holding a full card number: {'4444': ['saved_cards.last4'], '1111': ['saved_cards.last4'], '4242': [], '0002': []}",
+      "snapshot": {
+        "screenshot": "saved-cards/2026-10-25T23-28-24Z/the-shop-stores-no-full-card-number.png",
+        "text": "saved-cards/2026-10-25T23-28-24Z/the-shop-stores-no-full-card-number.txt"
+      }
+    },
+    {
+      "name": "checkout shows the current card by last four and expiry",
+      "passed": true,
+      "at": 1.43,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "row shows 'Card ending 4444 \u00b7 expires 10/26 Pay $18.00 with this card Remove', wanted expiry 10/26"
+    },
+    {
+      "name": "checkout shows the expired card by last four and expiry",
+      "passed": true,
+      "at": 1.43,
+      "sub_features": [
+        "saved-cards.save"
+      ],
+      "detail": "row shows 'Card ending 1111 \u00b7 expires 09/26 Expired Remove', wanted expiry 09/26"
+    },
+    {
+      "name": "a card expiring this month is offered for payment",
+      "passed": true,
+      "at": 1.44,
+      "sub_features": [
+        "saved-cards.expired"
+      ],
+      "detail": "card ending 4444: Pay buttons 1, labelled Expired False"
+    },
+    {
+      "name": "an expired card is labelled Expired with no way to pay",
+      "passed": true,
+      "at": 1.44,
+      "sub_features": [
+        "saved-cards.expired"
+      ],
+      "detail": "card ending 1111: Pay buttons 0, labelled Expired True"
+    },
+    {
+      "name": "an expired card is refused with no order or charge",
+      "passed": true,
+      "at": 1.46,
+      "sub_features": [
+        "saved-cards.expired"
+      ],
+      "detail": "cart when posted [{'product_id': 1, 'quantity': 1}], status 200, alert 'That card has expired. Please use another card.', new orders [], new charges 0"
+    },
+    {
+      "name": "paying with a saved card charges that card",
+      "passed": false,
+      "at": 1.58,
+      "sub_features": [
+        "saved-cards.pay"
+      ],
+      "detail": "order 19 paid total 1800 (shown 1800); charge ch_4e64b651bd38 succeeded to card card_6260df177562 ending 1111 for 1800; saved card's payments ID card_db02ea9d476f",
+      "evidence": {
+        "order_id": 19,
+        "charge_id": "ch_4e64b651bd38"
+      },
+      "snapshot": {
+        "screenshot": "saved-cards/2026-10-25T23-28-24Z/paying-with-a-saved-card-charges-that-card.png",
+        "text": "saved-cards/2026-10-25T23-28-24Z/paying-with-a-saved-card-charges-that-card.txt"
+      }
+    },
+    {
+      "name": "removing a card at checkout forgets it",
+      "passed": true,
+      "at": 1.73,
+      "sub_features": [
+        "saved-cards.remove"
+      ],
+      "detail": "after Remove on the checkout page, now at /checkout: rows shown 0, shop rows [], payments holds None",
+      "evidence": {
+        "saved_card_id": 4
+      }
+    },
+    {
+      "name": "removing a card on the Saved cards page forgets it",
+      "passed": true,
+      "at": 1.82,
+      "sub_features": [
+        "saved-cards.remove"
+      ],
+      "detail": "after Remove on the Saved cards page, now at /cards: rows shown 0, shop rows [], payments holds None",
+      "evidence": {
+        "saved_card_id": 3
+      }
+    }
+  ],
+  "marks": [
+    {
+      "kind": "step",
+      "label": "Step 1: Customer ticks Save on a card that is declined",
+      "at": 0.42
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 0.42
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 0.46
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.47
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 0.54
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 0002, saving it",
+      "at": 0.6
+    },
+    {
+      "kind": "step",
+      "label": "Step 2: Customer pays without ticking Save",
+      "at": 0.67
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 0.67
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove",
+      "at": 0.68
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 0.73
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.74
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 0.79
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 4242",
+      "at": 0.82
+    },
+    {
+      "kind": "step",
+      "label": "Step 3: Customer saves a card expiring this month and one that has expired",
+      "at": 0.88
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 0.88
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 0.9
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.9
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 0.95
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 4444, saving it",
+      "at": 1.0
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 1.06
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 1.08
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 1.09
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.13
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 1111, saving it",
+      "at": 1.18
+    },
+    {
+      "kind": "step",
+      "label": "Step 4: Checkout shows the saved cards; the expired one can't be picked",
+      "at": 1.32
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 1.32
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 1.34
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 1.35
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.4
+    },
+    {
+      "kind": "step",
+      "label": "Step 5: A stale checkout form submits the expired card",
+      "at": 1.44
+    },
+    {
+      "kind": "action",
+      "label": "Submits the expired card's Pay form from a stale tab",
+      "at": 1.45
+    },
+    {
+      "kind": "step",
+      "label": "Step 6: Customer pays with the saved card expiring this month",
+      "at": 1.46
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.46
+    },
+    {
+      "kind": "action",
+      "label": "Pays with the saved card ending 4444",
+      "at": 1.49
+    },
+    {
+      "kind": "step",
+      "label": "Step 7: Customer removes the expired card at checkout and the other on the Saved cards page",
+      "at": 1.58
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 1.58
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 1.6
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 1.61
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.66
+    },
+    {
+      "kind": "action",
+      "label": "Removes the card ending 1111",
+      "at": 1.67
+    },
+    {
+      "kind": "action",
+      "label": "Opens the Saved cards page",
+      "at": 1.73
+    },
+    {
+      "kind": "action",
+      "label": "Removes the card ending 4444",
+      "at": 1.76
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 1.82
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove",
+      "at": 1.84
+    }
+  ],
+  "created": {
+    "orders": [
+      "15",
+      "16",
+      "17",
+      "18",
+      "19"
+    ],
+    "saved_cards": [
+      "3",
+      "4"
+    ],
+    "charges": [
+      "ch_4e64b651bd38"
+    ]
+  },
+  "stopped": null,
+  "recording": {
+    "video": "saved-cards/2026-10-25T23-28-24Z/video.webm",
+    "starts_at": 0.34
+  },
+  "code": {
+    "storefront": {
+      "commit": "99e7c22a72365bb39d5ec64d6e5664a0e7d12962",
+      "branch": null,
+      "dirty": true,
+      "dirty_hash": "09aada5f4475cf526eb4e9ffb1e03ed702ee8cc6378459a469fb3a8a16595dc6",
+      "on_main": false
+    }
+  },
+  "harness_code": {
+    ".agents/skills/verify-storefront/scripts/checks/saved_cards.py": "747b6551c7fc81667ad772ad5c517162b2ecaa9360eb2f84ae102659d3421693",
+    ".agents/skills/verify-storefront/scripts/connection.py": "a476083ecb2b18e47e471e71084f686abcbf613c4df1cefa0402323779a56632",
+    ".agents/skills/verify-storefront/scripts/doctor.py": "4968f5e809dbb5f264f352592212f1d86946786fbcac3ccfcc0b7c5b7d811fc6",
+    ".agents/skills/verify-storefront/scripts/probe.py": "1da56dae7e9fffda5a363963aa147a6a6276201bd1510acbfcba056eae8e95d7",
+    ".agents/skills/verify-storefront/scripts/reads.py": "267d073a8952e84a707607e60ddaf0930668d02cf6494daef770a7028e148203",
+    ".agents/skills/verify-storefront/scripts/relaunch.sh": "1fa8df5bb9c3c0d7b623428c0d4108e37893a64df393b4d54272784bee1c07b9",
+    ".agents/skills/verify-storefront/scripts/report.py": "5ec499986eba34745ec791417d8e529ad740db65bd23907d3d30490153588973",
+    ".agents/skills/verify-storefront/scripts/screen.py": "597909212992d03aa04857a1f9683b8feb6c14c2b4cc6a58f1334aa20d58fd9c",
+    ".agents/skills/verify-storefront/scripts/serve.sh": "3c07384760fc472a6cd8a7e1dae2721804b2ebbedb5373c94a73df1a1aa3ac6e",
+    ".agents/skills/verify-storefront/scripts/shop_http.py": "691f0c34f1bb09c67cb8e291fddb89a467a1f230d08eb64cebebcbd99eaeb08e",
+    ".agents/skills/verify-storefront/settings.md": "3ef933480e21833b70e72fd0a10e837f5096c57702cf38dee026645bc0300def"
+  },
+  "doctor": {
+    "exit_code": 0,
+    "output": "payments: up, process 65805 in launched group 65793, port 8801, commit 99e7c22, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-ntiwpral/data/payments.sqlite\nshop: up, process 65839 in launched group 65793, port 8800, commit 99e7c22, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-ntiwpral/data/shop.sqlite\nauth: none; the shop has one always signed-in customer\ncode: storefront 99e7c22 on None, uncommitted changes 09aada5f4475, on default branch: False\nverify-storefront: ready"
+  },
+  "started_at": "2026-10-25T23:28:24Z",
+  "finished_at": "2026-10-25T23:28:26Z",
+  "planned_break": {
+    "what": "paying with a saved card charges the most recently saved card, not the chosen one",
+    "sub_features": [
+      "saved-cards.pay"
+    ],
+    "repo": "storefront"
+  },
+  "accepted_by": "vf.py run"
+}

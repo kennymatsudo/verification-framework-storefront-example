@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..8aeba9624f3e883574be44135ab41d4a09c37a57 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -124,7 +124,7 @@ def create_app(
+         order_id = repository.create_order(customer_id, lines, total_cents)
+         try:
+             if saved_card is not None:
+-                charge = payments.charge_saved(total_cents, saved_card["payments_card_id"])
++                charge = payments.charge_saved(total_cents, repository.saved_cards(customer_id)[-1]["payments_card_id"])
+             else:
+                 charge = payments.charge(total_cents, card_number, expiry, name_on_card, save_card=save_card)
+         except PaymentsUnavailable:
