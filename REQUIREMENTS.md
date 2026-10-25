@@ -25,6 +25,7 @@ Expected behavior lives here, not in the code. Each item has an ID so checks and
 
 - **OR-1** The orders page lists the customer's orders, newest first, each with its status and total.
 - **OR-2** An order's page shows its lines, its total, and its status.
+- **OR-3** A paid order's page shows an estimated delivery date, five days after the order was placed. An order that is not paid shows none.
 
 ## Saved cards
 

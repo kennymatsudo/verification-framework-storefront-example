@@ -6,6 +6,9 @@
   <span class="status status-{{ order.status }}" data-status>{{ order.status }}</span>
   {% if order.status == "paid" %}Thanks, {{ customer.name.split(' ')[0] }}. Your payment went through.{% endif %}
 </p>
+{% if order.status == "paid" %}
+<p class="delivery">Estimated delivery <strong data-delivery>{{ order.placed_at | delivery }}</strong></p>
+{% endif %}
 <table class="lines">
   <tbody>
     {% for line in lines %}

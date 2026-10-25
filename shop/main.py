@@ -1,6 +1,6 @@
 """The storefront web app: catalog, cart, checkout, and order history for one signed-in customer."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from fastapi import FastAPI, Form, Request
@@ -16,6 +16,8 @@ HERE = Path(__file__).parent
 templates = Jinja2Templates(directory=HERE / "templates")
 templates.env.filters["money"] = lambda cents: f"${cents / 100:,.2f}"
 templates.env.filters["when"] = lambda stamp: datetime.fromisoformat(stamp).strftime("%b %-d, %Y at %H:%M UTC")
+DELIVERY_DAYS = 5
+templates.env.filters["delivery"] = lambda stamp: (datetime.fromisoformat(stamp) + timedelta(days=DELIVERY_DAYS)).strftime("%A, %b %-d")
 
 
 def create_app(repository: db.Repository | None = None, payments: PaymentsClient | None = None) -> FastAPI:

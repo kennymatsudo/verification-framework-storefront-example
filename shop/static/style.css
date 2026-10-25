@@ -56,3 +56,4 @@ table.lines tfoot th { border-bottom: 0; font-size: 16px; }
 .status-declined, .status-failed { background: #fee2e2; color: var(--bad); }
 .lead { font-size: 18px; }
 .meta, .empty { color: var(--muted); }
+.delivery { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; display: inline-block; }
