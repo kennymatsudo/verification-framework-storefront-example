@@ -6,3 +6,4 @@ Northwind Goods is a small storefront: a FastAPI shop (`shop/`) and a separate p
 - Expected behavior comes from `REQUIREMENTS.md`, never from the code. When a requirement leaves something open, ask before building.
 - Unit tests: `uv run pytest`. They mock the repository and the payments client, so they prove the shop's logic and nothing about the running stack.
 - Before reporting a change done, verify it on the running app with the verification harness (the `verify-storefront` skill once it exists). A unit test pass is not done.
+- For storefront readiness and state inspection, use the commands in [developer tools](.agents/skills/verify-storefront/tools.md). Read the entry's prerequisites, permissions, and limits before running it. These commands also support debugging outside verification.
