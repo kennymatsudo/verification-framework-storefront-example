@@ -1,0 +1,15 @@
+diff --git a/shop/db.py b/shop/db.py
+index 090aa27a15649e032ad59dd3bb79ff4f38e81fd3..9d9b003b68156bb5f66f3b9821c67934b96f4229 100644
+--- a/shop/db.py
++++ b/shop/db.py
+@@ -109,7 +109,9 @@ class Repository:
+ 
+     def remove_from_cart(self, customer_id: int, product_id: int) -> None:
+         self.connection.execute(
+-            "DELETE FROM cart_items WHERE customer_id = ? AND product_id = ?", (customer_id, product_id)
++            "UPDATE cart_items SET quantity = quantity - 1 WHERE customer_id = ? AND product_id = ?", (customer_id, product_id)
++        )
++        self.connection.execute("DELETE FROM cart_items WHERE quantity <= 0"
+         )
+         self.connection.commit()
+ 

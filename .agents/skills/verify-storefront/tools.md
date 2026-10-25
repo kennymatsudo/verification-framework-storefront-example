@@ -69,3 +69,54 @@ Run from the project root:
 - Limits: restarting does not undo data a check wrote.
 
 Help: `.agents/skills/verify-storefront/scripts/relaunch.sh --help`.
+
+## What is in the cart, an order, or a charge right now?
+
+Use when: debugging the cart or checkout, or re-checking what a check judged. It reports stored state; it does not by itself prove a feature works.
+
+Run from the project root:
+
+`python3 .agents/skills/verify-storefront/scripts/probe.py cart`, `... probe.py order <order-id>`, or `... probe.py charge <charge-id>`
+
+- Inputs: `cart` takes nothing; `order` takes the number from `/orders/<id>`; `charge` takes a payments ID such as `ch_1a2b3c4d5e6f`, which `order` shows. `--full` prints every stored column.
+- Environment: the shop and payments services running, since it finds each database through the service's `GET /health`. A relative path there resolves against the checkout the launch record names while its process is alive, or this repo otherwise.
+- Permissions: read-only. It opens the SQLite files each service's `/health` names (by default `data/shop.sqlite` and `data/payments.sqlite`; `STOREFRONT_DB` and `PAYMENTS_DB` change them) in read-only mode, in one read transaction per answer, and sends `GET /health`.
+- Result: exit 0 with one JSON object: the cart's lines (product ID and quantity) and unit count; an order's status, total, charge ID, placement time, and lines; a charge's status, amount, and card's last four digits. `next` lists follow-up probe commands. Values under keys that look like a secret, token, or password are redacted.
+- Failure: exit 1 with `{"not_found": ..., "hint": ...}` for an order or charge that isn't stored. Exit 2 with `STOPPED:` on stderr for a bad argument or when it can't read, such as a service that doesn't answer or a missing database file.
+- Limits: it reads storage, not what a page shows; a correct cart row can still render wrongly. The cart is the one always-signed-in customer's. Where each database lives comes from the app's own `/health` response; the rows themselves are read directly.
+
+Help: `python3 .agents/skills/verify-storefront/scripts/probe.py --help`.
+
+## Watch or share a recorded check run
+
+Use when: a check failed and you want to see it, or you want a clip of a run for a PR. The Checkout check records its browser; it keeps the video when the run fails or when `VERIFY_KEEP_RECORDING=1` is set for the run. `recordings.html` in this harness lists every check's latest run, with a Watch button where a video was kept.
+
+Run from the project root:
+
+`python3 .agents/skills/verify-storefront/scripts/framework/vf.py replay <evidence file>` builds a run's replay page; `python3 .agents/skills/verify-storefront/scripts/framework/vf.py clip --steps 2-3 <evidence file>` cuts those steps into an MP4, and `--frames failed` writes stills around each failed step.
+
+- Inputs: an evidence file such as `.agents/skills/verify-storefront/evidence/checkout/<time>.json`.
+- Environment: replay pages need nothing extra. Clips and stills need `ffmpeg`; `vf.py clip --check` says what this machine can make.
+- Permissions: local files only. Writes the replay page and `recordings.html`, or the clip and stills beside the evidence.
+- Result: the path of the page, clip, or stills.
+- Failure: exit nonzero with the reason, such as a run that kept no video.
+- Limits: a video shows what happened; the check's steps decide the verdict.
+
+Help: `python3 .agents/skills/verify-storefront/scripts/framework/vf.py replay --help` and `python3 .agents/skills/verify-storefront/scripts/framework/vf.py clip --help`.
+
+## Prove the cart or checkout works
+
+Use when: a change touches the cart or checkout. Each check proves the behaviors its feature file maps to it (`features/cart.md`, `features/checkout.md`).
+
+Run from the project root:
+
+`python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` in its place.
+
+- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout run's video.
+- Environment: an instance started with the Start command; the readiness check runs first. The Checkout check needs Playwright for Python and its Chromium in the system `python3`.
+- Permissions: local side effects only. Both empty the signed-in customer's cart; Cart leaves two products in it, and Checkout leaves a paid order, declined orders, and their charges in the local databases.
+- Result: one PASS or FAIL line per step, and `vf.py run` writes the evidence under `evidence/cart/` or `evidence/checkout/` and refreshes `status.md`.
+- Failure: exit 1 when a step failed, with what it found; exit 2 when the run stopped before a verdict, with the reason.
+- Limits: Cart reads served HTML, not a browser render. Neither covers the payments service being down, nor a cart changed in another tab before paying.
+
+Help: `python3 .agents/skills/verify-storefront/scripts/checks/cart.py --help` and `python3 .agents/skills/verify-storefront/scripts/checks/checkout.py --help`.

@@ -1,0 +1,185 @@
+{
+  "check": "cart",
+  "sub_features": [
+    "cart.add",
+    "cart.remove",
+    "cart.total",
+    "cart.badge"
+  ],
+  "passed": false,
+  "reads": "state and served HTML",
+  "steps": [
+    {
+      "name": "cart starts empty",
+      "passed": true,
+      "at": 0.02,
+      "sub_features": [],
+      "detail": "stored cart {}"
+    },
+    {
+      "name": "first add puts one in the cart",
+      "passed": true,
+      "at": 0.02,
+      "sub_features": [
+        "cart.add"
+      ],
+      "detail": "stored cart {1: 1}"
+    },
+    {
+      "name": "second add raises the quantity by one",
+      "passed": true,
+      "at": 0.03,
+      "sub_features": [
+        "cart.add"
+      ],
+      "detail": "stored cart {1: 2}"
+    },
+    {
+      "name": "cart holds several products",
+      "passed": true,
+      "at": 0.04,
+      "sub_features": [],
+      "detail": "stored cart {1: 2, 2: 3, 3: 2}"
+    },
+    {
+      "name": "cart page lines are price times quantity",
+      "passed": true,
+      "at": 0.04,
+      "sub_features": [
+        "cart.total"
+      ],
+      "detail": "page lines {1: (2, 3600), 2: (3, 12600), 3: (2, 17800)}, expected {1: (2, 3600), 2: (3, 12600), 3: (2, 17800)}"
+    },
+    {
+      "name": "cart page total is the sum of its lines",
+      "passed": true,
+      "at": 0.04,
+      "sub_features": [
+        "cart.total"
+      ],
+      "detail": "page total 34000, expected 34000"
+    },
+    {
+      "name": "header badge shows the units in the cart",
+      "passed": true,
+      "at": 0.04,
+      "sub_features": [
+        "cart.badge"
+      ],
+      "detail": "badges {'/cart': '7', '/': '7'}, units in cart 7"
+    },
+    {
+      "name": "remove takes every unit out and leaves the rest",
+      "passed": false,
+      "at": 0.05,
+      "sub_features": [
+        "cart.remove"
+      ],
+      "detail": "before {1: 2, 2: 3, 3: 2}, after {1: 1, 2: 3, 3: 2}, expected {2: 3, 3: 2}"
+    }
+  ],
+  "marks": [
+    {
+      "kind": "step",
+      "label": "Step 1: Start from an empty cart",
+      "at": 0.0
+    },
+    {
+      "kind": "step",
+      "label": "Step 2: Add the same product twice",
+      "at": 0.02
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.02
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook again",
+      "at": 0.02
+    },
+    {
+      "kind": "step",
+      "label": "Step 3: Fill the cart with several products",
+      "at": 0.03
+    },
+    {
+      "kind": "action",
+      "label": "Adds Brass Pen",
+      "at": 0.03
+    },
+    {
+      "kind": "action",
+      "label": "Adds Brass Pen",
+      "at": 0.03
+    },
+    {
+      "kind": "action",
+      "label": "Adds Brass Pen",
+      "at": 0.03
+    },
+    {
+      "kind": "action",
+      "label": "Adds Desk Lamp",
+      "at": 0.03
+    },
+    {
+      "kind": "action",
+      "label": "Adds Desk Lamp",
+      "at": 0.03
+    },
+    {
+      "kind": "step",
+      "label": "Step 4: Read the cart page",
+      "at": 0.04
+    },
+    {
+      "kind": "step",
+      "label": "Step 5: Remove a product with several units",
+      "at": 0.04
+    },
+    {
+      "kind": "action",
+      "label": "Removes Field Notebook",
+      "at": 0.04
+    }
+  ],
+  "stopped": null,
+  "code": {
+    "storefront": {
+      "commit": "e4df978a1e8b4a3365f18be7d78bd0aab8d192d0",
+      "branch": null,
+      "dirty": true,
+      "dirty_hash": "2c470b3940663567470539c6fc153032af3964c33aebd35de8f2f3cc965068e1",
+      "on_main": true
+    }
+  },
+  "harness_code": {
+    ".agents/skills/verify-storefront/scripts/checks/cart.py": "79a873f301d23359f960dd0fe3f744f1eb81b787dcbcb58e6f3a9e5f14552afb",
+    ".agents/skills/verify-storefront/scripts/connection.py": "a476083ecb2b18e47e471e71084f686abcbf613c4df1cefa0402323779a56632",
+    ".agents/skills/verify-storefront/scripts/doctor.py": "4968f5e809dbb5f264f352592212f1d86946786fbcac3ccfcc0b7c5b7d811fc6",
+    ".agents/skills/verify-storefront/scripts/probe.py": "b4ada8ec543440c54d7a03ccede537dd18ce2fa1be1a316e36c5cc867bc913d3",
+    ".agents/skills/verify-storefront/scripts/reads.py": "a0d7edb62cb87fcb319e9ec6b2d169f04b6e10ae46a75fd3da68a50b89bf36e2",
+    ".agents/skills/verify-storefront/scripts/relaunch.sh": "1fa8df5bb9c3c0d7b623428c0d4108e37893a64df393b4d54272784bee1c07b9",
+    ".agents/skills/verify-storefront/scripts/report.py": "5ec499986eba34745ec791417d8e529ad740db65bd23907d3d30490153588973",
+    ".agents/skills/verify-storefront/scripts/screen.py": "de7993b40a6e4c2ba6e912e06be6d226e764d15014e2b2399dc0783772b243e4",
+    ".agents/skills/verify-storefront/scripts/serve.sh": "3c07384760fc472a6cd8a7e1dae2721804b2ebbedb5373c94a73df1a1aa3ac6e",
+    ".agents/skills/verify-storefront/scripts/shop_http.py": "691f0c34f1bb09c67cb8e291fddb89a467a1f230d08eb64cebebcbd99eaeb08e",
+    ".agents/skills/verify-storefront/settings.md": "3ef933480e21833b70e72fd0a10e837f5096c57702cf38dee026645bc0300def"
+  },
+  "doctor": {
+    "exit_code": 0,
+    "output": "payments: up, process 42319 in launched group 42307, port 8801, commit e4df978, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-e_kjr1wj/data/payments.sqlite\nshop: up, process 42354 in launched group 42307, port 8800, commit e4df978, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-e_kjr1wj/data/shop.sqlite\nauth: none; the shop has one always signed-in customer\ncode: storefront e4df978 on None, uncommitted changes 2c470b394066, on default branch: True\nverify-storefront: ready"
+  },
+  "started_at": "2026-10-25T22:24:28Z",
+  "finished_at": "2026-10-25T22:24:28Z",
+  "planned_break": {
+    "what": "removing takes off one unit at a time instead of all",
+    "sub_features": [
+      "cart.remove"
+    ],
+    "repo": "storefront"
+  },
+  "accepted_by": "vf.py run"
+}

@@ -1,0 +1,18 @@
+URL: http://127.0.0.1:8800/orders/7
+
+Northwind Goods
+Shop
+Orders
+Cart 3
+Signed in as Mira Okafor
+Order #7
+
+Paid Thanks, Mira. Your payment went through.
+
+Field Notebook × 2	$36.00
+Brass Pen × 1	$42.00
+Total	$78.00
+
+Placed Oct 25, 2026 at 22:23 UTC · Payment ch_05c367619a61
+
+Keep shopping

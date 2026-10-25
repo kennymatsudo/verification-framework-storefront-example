@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="replay-format" content="7">
+<title>Replay: cart</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --text: #1a1a1a; --muted: #6b6b66; --faint: #a3a39c; --line: #e2e0d8; --rule: #1a1a1a; --card: #fffefb; --page: #f7f6f2; --hover: #f1efe8; --chip: #edebe3;
+  --accent: #1d4ed8; --now: #fbf1c7; --selected: #e8eef9;
+  --pass: #2f7d4a; --fail: #b42318; --fail-soft: #fbe9e6; --warn: #9a6700; --other: #6b6b66;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #ecebe6; --muted: #9a9a93; --faint: #6d6d67; --line: #2e2e2b; --rule: #ecebe6; --card: #1b1b19; --page: #141412; --hover: #222220; --chip: #262624;
+    --accent: #7aa2ff; --now: #3a3214; --selected: #1d2742;
+    --pass: #6ccf86; --fail: #ff8a7a; --fail-soft: #3a1c18; --warn: #f0c060; --other: #9a9a93;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: var(--page); color: var(--text); font-feature-settings: "tnum"; }
+h1, h2 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.mono, .time, .slug, .commit, .code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.87em; }
+.badge { display: inline-flex; align-items: baseline; gap: 7px; font-size: 13px; font-weight: 600; color: var(--other); white-space: nowrap; }
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; transform: translateY(-1px); }
+.badge.passed { color: var(--pass); }
+.badge.failed { color: var(--fail); }
+.badge.stopped { color: var(--warn); }
+.muted { color: var(--muted); }
+.ago::before { content: " · "; }
+kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; background: var(--card); color: var(--muted); }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 12.5px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+[hidden] { display: none !important; }
+
+body { display: flex; flex-direction: column; height: 100vh; }
+header { padding: 18px 28px 16px; border-bottom: 1px solid var(--line); background: var(--card); }
+header a.back { font-size: 13px; color: var(--muted); }
+header a.back:hover { color: var(--accent); }
+h1 { font-size: 26px; margin: 6px 0 6px; line-height: 1.2; }
+.slug { color: var(--muted); font-weight: 400; margin-left: 10px; font-size: 14px; }
+.outcome { margin: 0 0 4px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-size: 15px; }
+.meta { color: var(--muted); font-size: 13px; margin: 0; }
+.meta .code { font-size: 12.5px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; flex: 1; min-height: 0; }
+.player { overflow: auto; padding: 24px 28px 40px; }
+.stage { position: sticky; top: -24px; background: var(--page); padding-top: 24px; margin-top: -24px; z-index: 1; }
+video { width: 100%; max-height: 54vh; object-fit: contain; background: #0c0c0c; display: block; }
+.caption { background: #1a1a1a; color: #f3f2ee; padding: 9px 14px; min-height: 40px; font-size: 14px; border-top: 1px solid #2c2c2c; }
+.caption.fail { background: #7f1d14; }
+.caption.pass { background: #1f5c36; }
+.track { position: relative; height: 22px; background: var(--card); border: 1px solid var(--line); border-top: 0; }
+.track .head { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--text); opacity: .7; }
+.track button { position: absolute; top: 0; bottom: 0; transform: translateX(-50%); width: 10px; padding: 0; border: 0; background: none; cursor: pointer; }
+.track button::before { content: ""; position: absolute; left: 4px; top: 4px; bottom: 4px; width: 2px; background: var(--muted); }
+.track button.fail::before { background: var(--fail); width: 3px; left: 3.5px; }
+.track button.pass::before { background: var(--pass); }
+.track button:hover::before, .track button.selected::before { top: 1px; bottom: 1px; }
+.track button.selected::after { content: ""; position: absolute; left: 50%; bottom: -1px; width: 0; height: 0; border: 4px solid transparent; border-bottom-color: var(--text); transform: translate(-50%, 100%); }
+.hint { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+.detail { margin-top: 24px; background: var(--card); border: 1px solid var(--line); padding: 18px 20px; }
+.detail.fail { border-left: 3px solid var(--fail); }
+.detail.pass { border-left: 3px solid var(--pass); }
+.detail h2 { font-size: 20px; margin: 0 0 8px; }
+.detail .result { font-size: 13px; font-weight: 600; margin: 0 0 4px; }
+.detail .result.fail { color: var(--fail); } .detail .result.pass { color: var(--pass); }
+.detail pre { margin: 10px 0 0; padding: 10px 12px; background: var(--chip); }
+.detail img { display: block; max-width: 100%; margin: 14px 0; border: 1px solid var(--line); }
+.detail .note { margin: 0; }
+.note { color: var(--muted); }
+aside { border-left: 1px solid var(--line); background: var(--card); display: flex; flex-direction: column; min-height: 0; }
+.summary { padding: 14px 20px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 14px; }
+.summary .fail { color: var(--fail); }
+#steps { overflow: auto; flex: 1; margin: 0; padding: 4px 0 32px; list-style: none; }
+.group { border-bottom: 1px solid var(--line); }
+.group:last-child { border-bottom: 0; }
+.group > .title { display: flex; gap: 10px; align-items: baseline; width: 100%; padding: 11px 20px; border: 0; background: none; color: inherit; font: inherit; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; }
+.group > .title:hover, .row:hover { background: var(--hover); }
+.group > .title .chevron { color: var(--faint); font-size: 10px; width: 10px; flex: none; }
+.group > .title .label { flex: 1; min-width: 0; }
+.group > .title .count { color: var(--muted); font-weight: 400; font-size: 12.5px; white-space: nowrap; }
+.group.failed > .title .count { color: var(--fail); }
+.group ul { margin: 0; padding: 0 0 8px; list-style: none; }
+.row { display: flex; gap: 10px; align-items: baseline; padding: 5px 20px 5px 40px; cursor: pointer; font-size: 14px; }
+.row .icon { flex: none; width: 12px; text-align: center; font-weight: 700; font-size: 12px; }
+.row.pass .icon { color: var(--pass); } .row.fail .icon { color: var(--fail); } .row.action .icon { color: var(--faint); }
+.row.fail { font-weight: 600; }
+.row.action { color: var(--muted); }
+.row .label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.time { color: var(--muted); font-weight: 400; }
+.now { background: var(--now); }
+.selected, .selected:hover { background: var(--selected); box-shadow: inset 2px 0 0 var(--accent); }
+/* Without a video there is nothing to put beside the steps, so the page reads top to bottom. */
+.layout.novideo { display: flex; flex-direction: column; max-width: 720px; width: 100%; margin: 0 auto; flex: none; }
+.novideo aside { order: 0; border: 1px solid var(--line); margin: 28px 28px 0; }
+.novideo .player { order: 1; overflow: visible; }
+.novideo #steps { overflow: visible; }
+@media (max-width: 860px) {
+  body { display: block; height: auto; }
+  header, .player { padding-left: 16px; padding-right: 16px; }
+  .layout { display: block; }
+  .player { overflow: visible; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+  #steps { overflow: visible; }
+  .novideo aside { margin: 20px 16px 0; }
+}
+</style>
+</head>
+<body>
+<header>
+<a class="back" href="../../../recordings.html">&larr; All check runs</a>
+<h1>Cart <span class="slug">cart</span></h1>
+<p class="outcome"><span class="badge passed">Passed</span> <span><span class="muted"></span>All 8 steps passed</span></p>
+<p class="meta"><span class="code">storefront main e4df978</span> · <time datetime="2026-10-25T22:21:57Z">2026-10-25 22:21 UTC</time></p>
+</header>
+<div class="layout novideo">
+<main class="player">
+<p class="note">No video was kept for this run.</p>
+<section id="detail" class="detail" aria-live="polite"></section>
+</main>
+<aside>
+<div class="summary">✓ All 8 steps passed</div>
+<ol id="steps"></ol>
+</aside>
+</div>
+<script type="application/json" id="data">{"timeline": [{"at": 0.0, "kind": "step", "label": "Step 1: Start from an empty cart", "video_at": null}, {"at": 0.01, "kind": "action", "label": "Removes product 3", "video_at": null}, {"at": 0.03, "kind": "step", "label": "Step 2: Add the same product twice", "video_at": null}, {"at": 0.03, "kind": "action", "label": "Removes product 6", "video_at": null}, {"at": 0.03, "kind": "action", "label": "Adds Field Notebook", "video_at": null}, {"at": 0.03, "kind": "pass", "label": "cart starts empty", "detail": "stored cart {}", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.04, "kind": "step", "label": "Step 3: Fill the cart with several products", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Field Notebook again", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Brass Pen", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Brass Pen", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Brass Pen", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Desk Lamp", "video_at": null}, {"at": 0.04, "kind": "action", "label": "Adds Desk Lamp", "video_at": null}, {"at": 0.04, "kind": "pass", "label": "first add puts one in the cart", "detail": "stored cart {1: 1}", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.04, "kind": "pass", "label": "second add raises the quantity by one", "detail": "stored cart {1: 2}", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.05, "kind": "step", "label": "Step 4: Read the cart page", "video_at": null}, {"at": 0.05, "kind": "step", "label": "Step 5: Remove a product with several units", "video_at": null}, {"at": 0.05, "kind": "action", "label": "Removes Field Notebook", "video_at": null}, {"at": 0.05, "kind": "pass", "label": "cart holds several products", "detail": "stored cart {1: 2, 2: 3, 3: 2}", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.05, "kind": "pass", "label": "cart page lines are price times quantity", "detail": "page lines {1: (2, 3600), 2: (3, 12600), 3: (2, 17800)}, expected {1: (2, 3600), 2: (3, 12600), 3: (2, 17800)}", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.05, "kind": "pass", "label": "cart page total is the sum of its lines", "detail": "page total 34000, expected 34000", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.05, "kind": "pass", "label": "header badge shows the units in the cart", "detail": "badges {'/cart': '7', '/': '7'}, units in cart 7", "evidence": null, "snapshot": {}, "video_at": null}, {"at": 0.06, "kind": "pass", "label": "remove takes every unit out and leaves the rest", "detail": "before {1: 2, 2: 3, 3: 2}, after {2: 3, 3: 2}, expected {2: 3, 3: 2}", "evidence": null, "snapshot": {}, "video_at": null}], "lead": 3}</script>
+<script>
+const data = JSON.parse(document.getElementById('data').textContent);
+const video = document.getElementById('video');
+const caption = document.getElementById('caption');
+const track = document.getElementById('track');
+const detail = document.getElementById('detail');
+const list = document.getElementById('steps');
+const entries = data.timeline;
+const failed = entries.filter((entry) => entry.kind === 'fail');
+const verdicts = entries.filter((entry) => entry.kind === 'pass' || entry.kind === 'fail');
+// j and k move between failures, or between every verdict when nothing failed.
+const stops = failed.length ? failed : verdicts;
+const clock = (seconds) => seconds === null ? '' : `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+const text = (tag, value, className) => { const node = document.createElement(tag); node.textContent = value; if (className) node.className = className; return node; };
+const details = (entry) => [entry.detail, entry.evidence ? JSON.stringify(entry.evidence, null, 2) : ''].filter(Boolean).join('\n');
+const steps = (count) => `${count} step${count === 1 ? '' : 's'}`;
+// A verdict plays from a few seconds before it was decided, so the action that led to it is on screen.
+const playFrom = (entry) => verdicts.includes(entry) ? Math.max(entry.video_at - data.lead, 0) : entry.video_at;
+const seek = (seconds) => {
+  if (!video || seconds === null) return;
+  const go = () => { video.currentTime = Math.max(seconds, 0); };
+  if (video.readyState >= 1) go(); else video.addEventListener('loadedmetadata', go, { once: true });
+};
+
+// Each step mark starts a group holding the verdicts and actions after it, so a long run reads as a few parts.
+const plain = (label) => label.toLowerCase().replace(/[\s.:!]+$/, '');
+const groups = [];
+for (const entry of entries) {
+  if (entry.kind === 'step' || !groups.length) groups.push({ head: entry.kind === 'step' ? entry : null, entries: [] });
+  // A recorder often marks the step's own action with the step's words; the group's title already says it.
+  const group = groups[groups.length - 1];
+  if (entry.kind !== 'step' && !(entry.kind === 'action' && group.head && plain(entry.label) === plain(group.head.label))) group.entries.push(entry);
+}
+const rows = new Map();
+const heads = new Map();
+const expand = (group, open) => {
+  group.open = open;
+  group.list.hidden = !open;
+  group.chevron.textContent = open ? '▾' : '▸';
+  group.button.setAttribute('aria-expanded', String(open));
+};
+for (const group of groups) {
+  const fails = group.entries.filter((entry) => entry.kind === 'fail').length;
+  const decided = group.entries.filter((entry) => entry.kind !== 'action').length;
+  const item = text('li', '', fails ? 'group failed' : 'group');
+  group.button = text('button', '', 'title');
+  group.button.type = 'button';
+  group.chevron = text('span', '', 'chevron');
+  group.button.appendChild(group.chevron);
+  group.button.appendChild(text('span', group.head ? group.head.label : 'Before the first step', 'label'));
+  group.button.appendChild(text('span', fails ? `✕ ${fails} of ${decided}` : decided ? `✓ ${decided}` : '', 'count'));
+  if (group.head) group.button.appendChild(text('span', clock(group.head.video_at), 'time'));
+  item.appendChild(group.button);
+  group.list = text('ul', '');
+  for (const entry of group.entries) {
+    const row = text('li', '', `row ${entry.kind}`);
+    row.appendChild(text('span', entry.kind === 'pass' ? '✓' : entry.kind === 'fail' ? '✕' : '·', 'icon'));
+    row.appendChild(text('span', entry.label, 'label'));
+    row.appendChild(text('span', clock(entry.video_at), 'time'));
+    row.onclick = () => choose(entry, true);
+    rows.set(entry, row);
+    group.list.appendChild(row);
+  }
+  item.appendChild(group.list);
+  if (group.head) heads.set(group.head, group.button);
+  group.button.onclick = () => {
+    if (group.open && group.head && selected === group.head) expand(group, false);
+    else if (group.head) choose(group.head, true);
+    else expand(group, !group.open);
+  };
+  expand(group, fails > 0);
+  list.appendChild(item);
+}
+const groupOf = (entry) => groups.find((group) => group.head === entry || group.entries.includes(entry));
+
+let selected = null;
+const show = (entry) => {
+  detail.replaceChildren();
+  detail.className = `detail ${entry.kind}`;
+  if (entry.kind === 'pass' || entry.kind === 'fail') detail.appendChild(text('p', entry.kind === 'fail' ? '✕ Failed' : '✓ Passed', `result ${entry.kind}`));
+  detail.appendChild(text('h2', entry.label));
+  if (entry.kind === 'step') {
+    const inside = groupOf(entry).entries.filter((other) => other.kind !== 'action');
+    const fails = inside.filter((other) => other.kind === 'fail').length;
+    const note = fails ? `${fails} of ${steps(inside.length)} failed here.` : inside.length ? `${steps(inside.length)} passed here.` : 'No step was decided here.';
+    detail.appendChild(text('p', note, 'note'));
+  }
+  if (details(entry)) detail.appendChild(text('pre', details(entry)));
+  if (entry.snapshot && entry.snapshot.screenshot) {
+    const image = document.createElement('img');
+    image.src = entry.snapshot.screenshot;
+    image.alt = `The page when "${entry.label}" failed`;
+    detail.appendChild(image);
+  }
+  if (entry.snapshot && entry.snapshot.text) {
+    const page = text('a', 'Page text at the failure');
+    page.href = entry.snapshot.text;
+    detail.appendChild(page);
+  }
+};
+// Keeps a row in view inside the step list without scrolling the whole page.
+const reveal = (node) => {
+  const box = list.getBoundingClientRect();
+  const spot = node.getBoundingClientRect();
+  if (spot.top < box.top || spot.bottom > box.bottom) list.scrollTop += spot.top - box.top - box.height / 3;
+};
+const choose = (entry, play) => {
+  if (selected) (rows.get(selected) || heads.get(selected)).classList.remove('selected');
+  selected = entry;
+  const group = groupOf(entry);
+  if (!group.open) expand(group, true);
+  const node = rows.get(entry) || heads.get(entry);
+  node.classList.add('selected');
+  reveal(node);
+  markers.forEach(([marked, button]) => button.classList.toggle('selected', marked === entry));
+  show(entry);
+  if (video && entry.video_at !== null) {
+    seek(playFrom(entry));
+    if (play) video.play();
+  }
+};
+
+const markers = [];
+if (video) {
+  // Every verdict sits on a strip under the video, placed once its length is known.
+  const head = text('div', '', 'head');
+  track.appendChild(head);
+  const place = () => {
+    if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+    for (const entry of verdicts.filter((entry) => entry.video_at !== null)) {
+      const button = text('button', '', entry.kind);
+      button.type = 'button';
+      button.title = `${clock(entry.video_at)} ${entry.label}`;
+      button.style.left = `${Math.min(entry.video_at / video.duration, 1) * 100}%`;
+      button.onclick = () => choose(entry, true);
+      markers.push([entry, button]);
+      track.appendChild(button);
+    }
+  };
+  if (video.readyState >= 1) place(); else video.addEventListener('loadedmetadata', place, { once: true });
+
+  const shown = entries.filter((entry) => entry.video_at !== null);
+  let current = null;
+  video.addEventListener('timeupdate', () => {
+    const now = video.currentTime;
+    if (Number.isFinite(video.duration) && video.duration > 0) head.style.left = `${Math.min(now / video.duration, 1) * 100}%`;
+    let latest = null;
+    for (const entry of shown) if (entry.video_at <= now) latest = entry;
+    // For a few seconds after a verdict the caption names it; otherwise it names the step under way.
+    const decided = verdicts.find((entry) => entry.video_at !== null && entry.video_at <= now && now < entry.video_at + 3);
+    const step = shown.filter((entry) => entry.kind === 'step' && entry.video_at <= now).pop();
+    caption.textContent = decided ? `${decided.kind === 'fail' ? 'Failed' : 'Passed'}: ${decided.label}` : step ? step.label : '';
+    caption.className = `caption ${decided ? decided.kind : ''}`;
+    if (latest === current) return;
+    if (current) (rows.get(current) || heads.get(current)).classList.remove('now');
+    current = latest;
+    if (!current) return;
+    const group = groupOf(current);
+    const node = group.open ? rows.get(current) || heads.get(current) : group.button;
+    node.classList.add('now');
+    if (!video.paused) reveal(node);
+  });
+}
+
+// j or the down arrow jumps to the next failure, k or the up arrow to the previous one.
+document.addEventListener('keydown', (event) => {
+  if (event.metaKey || event.ctrlKey || event.altKey || !stops.length) return;
+  const forward = event.key === 'j' || event.key === 'ArrowDown';
+  if (!forward && event.key !== 'k' && event.key !== 'ArrowUp') return;
+  event.preventDefault();
+  const at = stops.indexOf(selected);
+  const next = at === -1 ? (forward ? 0 : stops.length - 1) : (at + (forward ? 1 : -1) + stops.length) % stops.length;
+  choose(stops[next], true);
+});
+
+// The recordings page's Watch links open this page at #at=<seconds into the video>, a little before a verdict;
+// otherwise the page opens on the first failure, ready to play from just before it.
+const start = location.hash ? Number(new URLSearchParams(location.hash.slice(1)).get('at')) : NaN;
+const reach = start + data.lead + 0.05;
+const linked = Number.isFinite(start)
+  ? verdicts.find((entry) => entry.video_at !== null && entry.video_at >= start && entry.video_at <= reach)
+    || entries.filter((entry) => entry.video_at !== null && entry.video_at <= reach).pop()
+  : null;
+const first = linked || failed[0] || entries[0];
+if (first) choose(first, false);
+if (Number.isFinite(start)) seek(start);
+
+const relative = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+const ago = (date) => {
+  const minutes = (date - Date.now()) / 60000;
+  for (const [unit, size] of [['day', 1440], ['hour', 60], ['minute', 1]]) {
+    if (Math.abs(minutes) >= size || unit === 'minute') return relative.format(Math.round(minutes / size), unit);
+  }
+};
+for (const time of document.querySelectorAll('time[datetime]')) {
+  const date = new Date(time.getAttribute('datetime'));
+  if (isNaN(date)) continue;
+  time.title = time.textContent;
+  // The year shows only for a run from another year, so a date fits on one line.
+  time.textContent = date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', ...(date.getFullYear() === new Date().getFullYear() ? {} : { year: 'numeric' }) });
+  time.insertAdjacentHTML('afterend', `<span class="ago">${ago(date)}</span>`);
+}
+</script>
+</body>
+</html>

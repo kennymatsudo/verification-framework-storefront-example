@@ -1,0 +1,16 @@
+URL: http://127.0.0.1:8800/orders/10
+
+Northwind Goods
+Shop
+Orders
+Cart 0
+Signed in as Mira Okafor
+Order #10
+
+Paid Thanks, Mira. Your payment went through.
+
+Total	$0.00
+
+Placed Oct 25, 2026 at 22:23 UTC · Payment ch_08dd23280545
+
+Keep shopping

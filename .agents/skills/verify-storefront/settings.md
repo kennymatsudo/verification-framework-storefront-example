@@ -20,7 +20,7 @@ The values `rules.md` refers to for this app. Change a rule in the framework tha
 - Stop: python3 .agents/skills/verify-storefront/scripts/framework/vf.py stop
 - Doctor: python3 .agents/skills/verify-storefront/scripts/doctor.py
 - Ready line: verify-storefront: ready
-- Probe: none yet
+- Probe: python3 .agents/skills/verify-storefront/scripts/probe.py
 - Run scratch code: .agents/skills/verify-storefront/scripts/relaunch.sh {repo} {checkout}
 - After an edit: .agents/skills/verify-storefront/scripts/relaunch.sh {repo} {checkout}
 

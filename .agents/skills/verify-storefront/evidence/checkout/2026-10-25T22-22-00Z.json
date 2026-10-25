@@ -1,0 +1,283 @@
+{
+  "check": "checkout",
+  "sub_features": [
+    "checkout.order-lines",
+    "checkout.pay",
+    "checkout.decline",
+    "checkout.clears-cart",
+    "checkout.empty-cart"
+  ],
+  "passed": null,
+  "reads": "what the user sees and stored state",
+  "steps": [
+    {
+      "name": "cart starts empty",
+      "passed": true,
+      "at": 0.93,
+      "sub_features": [],
+      "detail": "stored cart {}"
+    },
+    {
+      "name": "cart holds the test products",
+      "passed": true,
+      "at": 1.07,
+      "sub_features": [],
+      "detail": "stored cart {1: 2, 2: 1}, wanted {1: 2, 2: 1}"
+    },
+    {
+      "name": "the payment service saw the declined card",
+      "passed": true,
+      "at": 1.21,
+      "sub_features": [],
+      "detail": "new charges 1"
+    },
+    {
+      "name": "declined attempt leaves no paid order",
+      "passed": true,
+      "at": 1.21,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "orders from this attempt {2: 'declined'}"
+    },
+    {
+      "name": "declined card is reported on the checkout page",
+      "passed": true,
+      "at": 1.22,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "page /checkout, alert 'Your card was declined. Please try another card.'"
+    },
+    {
+      "name": "declined attempt leaves the cart as it was",
+      "passed": true,
+      "at": 1.23,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "stored cart {1: 2, 2: 1}, before {1: 2, 2: 1}"
+    },
+    {
+      "name": "checkout page shows the cart",
+      "passed": true,
+      "at": 1.25,
+      "sub_features": [],
+      "detail": "shown lines [('Field Notebook', 2, 3600), ('Brass Pen', 1, 4200)], total 7800"
+    },
+    {
+      "name": "order stores the lines and total shown at checkout",
+      "passed": true,
+      "at": 1.31,
+      "sub_features": [
+        "checkout.order-lines"
+      ],
+      "detail": "order 3 lines [('Field Notebook', 2, 3600), ('Brass Pen', 1, 4200)] total 7800; shown [('Field Notebook', 2, 3600), ('Brass Pen', 1, 4200)] total 7800",
+      "evidence": {
+        "order_id": 3
+      }
+    },
+    {
+      "name": "paid order records a charge for its total",
+      "passed": true,
+      "at": 1.31,
+      "sub_features": [
+        "checkout.pay"
+      ],
+      "detail": "order 3 paid total 7800; charge ch_c2c0577ad7b7 succeeded for 7800",
+      "evidence": {
+        "order_id": 3,
+        "charge_id": "ch_c2c0577ad7b7"
+      }
+    },
+    {
+      "name": "cart is empty after paying",
+      "passed": true,
+      "at": 1.33,
+      "sub_features": [
+        "checkout.clears-cart"
+      ],
+      "detail": "stored cart {}, badge on /orders/3 shows '0'"
+    },
+    {
+      "name": "empty cart shows no payment form",
+      "passed": true,
+      "at": 1.35,
+      "sub_features": [
+        "checkout.empty-cart"
+      ],
+      "detail": "at /cart, Pay buttons 0, card number fields 0, cart empty True"
+    },
+    {
+      "name": "paying for an emptied cart stores no order and no charge",
+      "passed": true,
+      "at": 1.65,
+      "sub_features": [
+        "checkout.empty-cart"
+      ],
+      "detail": "Pay submitted: True (status 303); new orders [], new charges 0, now at /cart"
+    }
+  ],
+  "marks": [
+    {
+      "kind": "step",
+      "label": "Step 1: Customer empties the cart and fills it",
+      "at": 0.71
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 0.71
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove",
+      "at": 0.8
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove",
+      "at": 0.87
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 0.93
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.94
+    },
+    {
+      "kind": "action",
+      "label": "Back to the shop",
+      "at": 0.98
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.99
+    },
+    {
+      "kind": "action",
+      "label": "Back to the shop",
+      "at": 1.02
+    },
+    {
+      "kind": "action",
+      "label": "Adds Brass Pen",
+      "at": 1.03
+    },
+    {
+      "kind": "step",
+      "label": "Step 2: Customer pays with a card that is declined",
+      "at": 1.07
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Check out",
+      "at": 1.07
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 0002",
+      "at": 1.13
+    },
+    {
+      "kind": "step",
+      "label": "Step 3: Customer pays with a good card",
+      "at": 1.23
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.23
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 4242",
+      "at": 1.26
+    },
+    {
+      "kind": "step",
+      "label": "Step 4: Customer tries to check out an empty cart",
+      "at": 1.33
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page with an empty cart",
+      "at": 1.33
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 1.35
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 1.35
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.39
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart in another tab",
+      "at": 1.44
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove in another tab",
+      "at": 1.46
+    },
+    {
+      "kind": "action",
+      "label": "Pays in the first tab",
+      "at": 1.6
+    }
+  ],
+  "created": {
+    "orders": [
+      "2",
+      "3"
+    ],
+    "charges": [
+      "ch_c2c0577ad7b7"
+    ]
+  },
+  "stopped": "unexpected error: Error('Event loop is closed! Is Playwright already stopped?')",
+  "code": {
+    "storefront": {
+      "commit": "e4df978a1e8b4a3365f18be7d78bd0aab8d192d0",
+      "branch": "main",
+      "dirty": false,
+      "dirty_hash": null,
+      "on_main": true
+    }
+  },
+  "harness_code": {
+    ".agents/skills/verify-storefront/scripts/checks/checkout.py": "05f3768a0075278b7c275c3601b6d9bcce6c49906ee07bf2989149ffe58d4686",
+    ".agents/skills/verify-storefront/scripts/connection.py": "a476083ecb2b18e47e471e71084f686abcbf613c4df1cefa0402323779a56632",
+    ".agents/skills/verify-storefront/scripts/doctor.py": "4968f5e809dbb5f264f352592212f1d86946786fbcac3ccfcc0b7c5b7d811fc6",
+    ".agents/skills/verify-storefront/scripts/probe.py": "b4ada8ec543440c54d7a03ccede537dd18ce2fa1be1a316e36c5cc867bc913d3",
+    ".agents/skills/verify-storefront/scripts/reads.py": "a0d7edb62cb87fcb319e9ec6b2d169f04b6e10ae46a75fd3da68a50b89bf36e2",
+    ".agents/skills/verify-storefront/scripts/relaunch.sh": "1fa8df5bb9c3c0d7b623428c0d4108e37893a64df393b4d54272784bee1c07b9",
+    ".agents/skills/verify-storefront/scripts/report.py": "5ec499986eba34745ec791417d8e529ad740db65bd23907d3d30490153588973",
+    ".agents/skills/verify-storefront/scripts/screen.py": "cab810668458d4bf59f442519d614ec72fa9cb247bee7960f699bfda845e9edb",
+    ".agents/skills/verify-storefront/scripts/serve.sh": "3c07384760fc472a6cd8a7e1dae2721804b2ebbedb5373c94a73df1a1aa3ac6e",
+    ".agents/skills/verify-storefront/scripts/shop_http.py": "691f0c34f1bb09c67cb8e291fddb89a467a1f230d08eb64cebebcbd99eaeb08e",
+    ".agents/skills/verify-storefront/settings.md": "3ef933480e21833b70e72fd0a10e837f5096c57702cf38dee026645bc0300def"
+  },
+  "doctor": {
+    "exit_code": 0,
+    "output": "payments: up, process 37871 in launched group 37857, port 8801, commit e4df978, database /Users/kennymatsudo/projects/storefront/data/payments.sqlite\nshop: up, process 37895 in launched group 37857, port 8800, commit e4df978, database /Users/kennymatsudo/projects/storefront/data/shop.sqlite\nauth: none; the shop has one always signed-in customer\ncode: storefront e4df978 on main, clean, on default branch: True\nverify-storefront: ready"
+  },
+  "started_at": "2026-10-25T22:22:00Z",
+  "finished_at": "2026-10-25T22:22:02Z",
+  "planned_break": null,
+  "accepted_by": "vf.py run"
+}

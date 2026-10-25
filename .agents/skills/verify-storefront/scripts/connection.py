@@ -2,6 +2,7 @@
 
 import json
 import os
+import sqlite3
 import urllib.request
 from pathlib import Path
 
@@ -30,3 +31,36 @@ def health(service, timeout=3):
     """The service's /health body. Raises OSError when it doesn't answer 200, ValueError when the body isn't JSON."""
     with urllib.request.urlopen(base_url(service) + "/health", timeout=timeout) as response:
         return json.loads(response.read())
+
+
+def running_checkout():
+    """The checkout the running instance serves: the launch record's while its process is alive, else this one."""
+    if not LAUNCH_RECORD.exists():
+        return PROJECT_ROOT
+    record = json.loads(LAUNCH_RECORD.read_text())
+    try:
+        os.kill(record["pid"], 0)
+    except ProcessLookupError:
+        return PROJECT_ROOT  # a record left by a crashed launch names nothing that runs
+    except PermissionError:
+        pass  # alive, owned by another user
+    return launched_checkout(record)
+
+
+def database_path(service):
+    """The SQLite file the running service writes. /health names it relative to the service's working
+    directory, which scripts/dev.sh sets to the checkout. Raises OSError when the service doesn't answer,
+    and FileNotFoundError when the file is missing."""
+    path = Path(health(service)["database"])
+    if not path.is_absolute():
+        path = running_checkout() / path
+    if not path.exists():
+        raise FileNotFoundError(f"the {service} database {path} does not exist")
+    return path
+
+
+def read_only(service):
+    """A read-only connection to the service's database; it cannot write even by mistake."""
+    connection = sqlite3.connect(f"file:{database_path(service)}?mode=ro", uri=True, timeout=5)
+    connection.row_factory = sqlite3.Row
+    return connection

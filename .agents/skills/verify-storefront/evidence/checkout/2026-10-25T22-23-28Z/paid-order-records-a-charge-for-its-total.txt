@@ -1,0 +1,10 @@
+URL: http://127.0.0.1:8800/cart
+
+Northwind Goods
+Shop
+Orders
+Cart 0
+Signed in as Mira Okafor
+Your cart
+
+Your cart is empty. Keep shopping.
