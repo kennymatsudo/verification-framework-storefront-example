@@ -1,0 +1,133 @@
+$ doctor before any start
+not ready: no instance was started with vf.py start
+exit=1
+
+$ Start
+started process 33190: .agents/skills/verify-storefront/scripts/serve.sh
+code: storefront bcd33ce (uncommitted c905818e)
+started
+exit=0
+
+$ Doctor (real start)
+payments: up, process 33204 in launched group 33190, port 8801, commit bcd33ce, database /Users/kennymatsudo/projects/storefront/data/payments.sqlite
+shop: up, process 33234 in launched group 33190, port 8800, commit bcd33ce, database /Users/kennymatsudo/projects/storefront/data/shop.sqlite
+auth: none; the shop has one always signed-in customer
+code: storefront bcd33ce on main, uncommitted changes c905818e2a4b, on default branch: True
+verify-storefront: ready
+exit=0
+
+$ STOREFRONT_PORT=8899 Doctor (wrong port)
+not ready: nothing listens on the shop port 8899
+exit=1
+
+$ Doctor after adding an untracked file at the project root (code on disk differs from launch)
+not ready: storefront changed since start (storefront bcd33ce (uncommitted c905818e), now storefront bcd33ce (uncommitted 3c84fc75)); restart with vf.py stop and vf.py start to run the current code
+exit=1
+$ Doctor after removing it
+verify-storefront: ready
+exit=0
+
+$ Stop
+process 33190 stopped; record removed
+exit=0
+$ Doctor after Stop
+not ready: no instance was started with vf.py start
+exit=1
+listeners after stop:        0
+payments.log
+payments.sqlite
+shop.log
+shop.sqlite
+
+$ Start
+started process 33543: .agents/skills/verify-storefront/scripts/serve.sh
+code: storefront bcd33ce (uncommitted c905818e)
+started
+exit=0
+$ kill -9 the whole launched group 33543 (simulated crash; record left behind)
+record still present: yes
+$ Doctor after crash
+not ready: process 33543 has exited; start it again with vf.py start
+exit=1
+$ Start again (should replace the stale record)
+started process 33669: .agents/skills/verify-storefront/scripts/serve.sh
+code: storefront bcd33ce (uncommitted c905818e)
+started
+exit=0
+new record pid: 33669 (was 33543)
+$ Doctor
+verify-storefront: ready
+exit=0
+$ Stop
+process 33669 stopped; record removed
+exit=0
+
+$ A stranger process 33810 (not launched by the harness) holds port 8800 and answers /health like the shop
+$ Start
+the app exited 1 before it was ready; process already gone, record removed
+last output (/Users/kennymatsudo/projects/storefront/.agents/skills/verify-storefront/evidence/launch/output.log):
+--- 2026-10-25T22:08:05Z .agents/skills/verify-storefront/scripts/serve.sh
+payments ready on :8801
+shop ready on :8800
+shop stopped
+payments stopped
+--- 2026-10-25T22:08:35Z .agents/skills/verify-storefront/scripts/serve.sh
+payments ready on :8801
+shop ready on :8800
+--- 2026-10-25T22:08:38Z .agents/skills/verify-storefront/scripts/serve.sh
+payments ready on :8801
+shop ready on :8800
+shop stopped
+payments stopped
+--- 2026-10-25T22:08:52Z .agents/skills/verify-storefront/scripts/serve.sh
+payments ready on :8801
+shop ready on :8800
+serve: shop exited; see /Users/kennymatsudo/projects/storefront/data/shop.log
+shop stopped
+payments stopped
+exit=1
+$ Doctor
+not ready: no instance was started with vf.py start
+exit=1
+
+$ Start (real app on 8800/8801)
+started process 33961: .agents/skills/verify-storefront/scripts/serve.sh
+code: storefront bcd33ce (uncommitted c905818e)
+started
+exit=0
+$ STOREFRONT_PORT=8802 Doctor, where stranger process 33938 answers /health like the shop
+not ready: the shop port 8802 is held by process 33938, which vf.py start did not launch; stop it or use other ports
+exit=1
+$ Stop
+process 33961 stopped; record removed
+exit=0
+
+$ Run scratch code: relaunch.sh storefront <scratch worktree at HEAD>
+nothing to stop
+started process 34127: .agents/skills/verify-storefront/scripts/serve.sh <scratch>
+code: storefront bcd33ce
+started
+exit=0
+$ Doctor
+payments: up, process 34156 in launched group 34127, port 8801, commit bcd33ce, database /private<scratch>/data/payments.sqlite
+shop: up, process 34196 in launched group 34127, port 8800, commit bcd33ce, database /private<scratch>/data/shop.sqlite
+auth: none; the shop has one always signed-in customer
+code: storefront bcd33ce on None, clean, on default branch: True
+verify-storefront: ready
+exit=0
+$ Run scratch code back: relaunch.sh storefront <project root>
+process 34127 stopped; record removed
+started process 34286: .agents/skills/verify-storefront/scripts/serve.sh /Users/kennymatsudo/projects/storefront
+code: storefront bcd33ce (uncommitted c905818e)
+started
+exit=0
+$ Doctor
+payments: up, process 34298 in launched group 34286, port 8801, commit bcd33ce, database /Users/kennymatsudo/projects/storefront/data/payments.sqlite
+shop: up, process 34332 in launched group 34286, port 8800, commit bcd33ce, database /Users/kennymatsudo/projects/storefront/data/shop.sqlite
+auth: none; the shop has one always signed-in customer
+code: storefront bcd33ce on main, uncommitted changes c905818e2a4b, on default branch: True
+verify-storefront: ready
+exit=0
+$ Stop
+process 34286 stopped; record removed
+exit=0
