@@ -1,0 +1,12 @@
+diff --git a/shop/main.py b/shop/main.py
+index 87dc0b5c8ae3caa405eb47de8281dcd2b678f3f4..1890619bf6197179d945b7b3ae09a0513ad06c56 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -99,7 +99,6 @@ def create_app(repository: db.Repository | None = None, payments: PaymentsClient
+                 error="Your card was declined. Please try another card.",
+             )
+         repository.set_order_status(order_id, "paid", charge.id)
+-        repository.clear_cart(customer_id)
+         return RedirectResponse(f"/orders/{order_id}", status_code=303)
+ 
+     @app.get("/orders", response_class=HTMLResponse)

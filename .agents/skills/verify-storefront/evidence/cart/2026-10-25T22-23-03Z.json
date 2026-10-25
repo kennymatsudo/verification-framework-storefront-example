@@ -1,0 +1,74 @@
+{
+  "check": "cart",
+  "sub_features": [
+    "cart.add",
+    "cart.remove",
+    "cart.total",
+    "cart.badge"
+  ],
+  "passed": null,
+  "reads": "state and served HTML",
+  "steps": [
+    {
+      "name": "cart starts empty",
+      "passed": false,
+      "at": 0.02,
+      "sub_features": [],
+      "detail": "stored cart {2: 0, 3: 0}"
+    }
+  ],
+  "marks": [
+    {
+      "kind": "step",
+      "label": "Step 1: Start from an empty cart",
+      "at": 0.0
+    },
+    {
+      "kind": "action",
+      "label": "Removes product 2",
+      "at": 0.01
+    },
+    {
+      "kind": "action",
+      "label": "Removes product 3",
+      "at": 0.02
+    }
+  ],
+  "stopped": "could not empty the cart through the Remove form, so no later step can be judged",
+  "code": {
+    "storefront": {
+      "commit": "e4df978a1e8b4a3365f18be7d78bd0aab8d192d0",
+      "branch": null,
+      "dirty": true,
+      "dirty_hash": "2ff802f96536565b1f26ef7e6f168917fb37498d9029f5b515482126fcd23553",
+      "on_main": true
+    }
+  },
+  "harness_code": {
+    ".agents/skills/verify-storefront/scripts/checks/cart.py": "436781d253074c8c550af77071b01e67f6ac2f57e98f2c376c268b7af350b8f6",
+    ".agents/skills/verify-storefront/scripts/connection.py": "a476083ecb2b18e47e471e71084f686abcbf613c4df1cefa0402323779a56632",
+    ".agents/skills/verify-storefront/scripts/doctor.py": "4968f5e809dbb5f264f352592212f1d86946786fbcac3ccfcc0b7c5b7d811fc6",
+    ".agents/skills/verify-storefront/scripts/probe.py": "b4ada8ec543440c54d7a03ccede537dd18ce2fa1be1a316e36c5cc867bc913d3",
+    ".agents/skills/verify-storefront/scripts/reads.py": "a0d7edb62cb87fcb319e9ec6b2d169f04b6e10ae46a75fd3da68a50b89bf36e2",
+    ".agents/skills/verify-storefront/scripts/relaunch.sh": "1fa8df5bb9c3c0d7b623428c0d4108e37893a64df393b4d54272784bee1c07b9",
+    ".agents/skills/verify-storefront/scripts/report.py": "5ec499986eba34745ec791417d8e529ad740db65bd23907d3d30490153588973",
+    ".agents/skills/verify-storefront/scripts/screen.py": "de7993b40a6e4c2ba6e912e06be6d226e764d15014e2b2399dc0783772b243e4",
+    ".agents/skills/verify-storefront/scripts/serve.sh": "3c07384760fc472a6cd8a7e1dae2721804b2ebbedb5373c94a73df1a1aa3ac6e",
+    ".agents/skills/verify-storefront/scripts/shop_http.py": "691f0c34f1bb09c67cb8e291fddb89a467a1f230d08eb64cebebcbd99eaeb08e",
+    ".agents/skills/verify-storefront/settings.md": "3ef933480e21833b70e72fd0a10e837f5096c57702cf38dee026645bc0300def"
+  },
+  "doctor": {
+    "exit_code": 0,
+    "output": "payments: up, process 40123 in launched group 40111, port 8801, commit e4df978, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-e_kjr1wj/data/payments.sqlite\nshop: up, process 40143 in launched group 40111, port 8800, commit e4df978, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-e_kjr1wj/data/shop.sqlite\nauth: none; the shop has one always signed-in customer\ncode: storefront e4df978 on None, uncommitted changes 2ff802f96536, on default branch: True\nverify-storefront: ready"
+  },
+  "started_at": "2026-10-25T22:23:03Z",
+  "finished_at": "2026-10-25T22:23:04Z",
+  "planned_break": {
+    "what": "removing takes off one unit instead of all",
+    "sub_features": [
+      "cart.remove"
+    ],
+    "repo": "storefront"
+  },
+  "accepted_by": "vf.py run"
+}

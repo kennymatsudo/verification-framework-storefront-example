@@ -11,3 +11,6 @@ See each check's latest run, and watch recorded ones, in [the recordings page](.
 - Isolation: one instance per checkout at the default ports 8800 and 8801; a scratch worktree gets its own `data/`. Never drive an instance you did not start: the readiness check fails when a port is held by a process the harness did not launch.
 
 ## Features
+
+- [Cart](cart.md): add, remove, cart total, header badge.
+- [Checkout](checkout.md): order matches the checkout page, paid order, declined card, cart emptied after paying, empty cart refused.

@@ -1,0 +1,13 @@
+diff --git a/shop/db.py b/shop/db.py
+index 090aa27a15649e032ad59dd3bb79ff4f38e81fd3..9103a2b9e51467c8c398d10752daaa09ac53b1a8 100644
+--- a/shop/db.py
++++ b/shop/db.py
+@@ -102,7 +102,7 @@ class Repository:
+     def add_to_cart(self, customer_id: int, product_id: int) -> None:
+         self.connection.execute(
+             """INSERT INTO cart_items (customer_id, product_id, quantity) VALUES (?, ?, 1)
+-               ON CONFLICT (customer_id, product_id) DO UPDATE SET quantity = quantity + 1""",
++               ON CONFLICT (customer_id, product_id) DO NOTHING""",
+             (customer_id, product_id),
+         )
+         self.connection.commit()
