@@ -70,3 +70,49 @@ def charge(charge_id):
 def charge_count():
     """How many charges the payments service has stored."""
     return _rows("payments", "SELECT COUNT(*) AS n FROM charges")[0]["n"]
+
+
+def saved_cards():
+    """The signed-in customer's saved cards as the shop stores them, in ID order."""
+    return _rows("shop", "SELECT * FROM saved_cards WHERE customer_id = ? ORDER BY id", (CUSTOMER,))
+
+
+def latest_saved_card_id():
+    """The highest stored saved-card ID across all customers, or 0 when there are none."""
+    return _rows("shop", "SELECT COALESCE(MAX(id), 0) AS id FROM saved_cards")[0]["id"]
+
+
+def shop_columns_containing(text):
+    """Every "table.column" in the shop database with a stored value containing text, ignoring spaces, so a
+    card number stored with or without its spaces is found. Scans every column of every table."""
+    with closing(connection.read_only("shop")) as db:
+        db.execute("BEGIN")
+        try:
+            tables = [row["name"] for row in db.execute("SELECT name FROM sqlite_master WHERE type = 'table'")]
+            found = []
+            for table in tables:
+                for column in [row["name"] for row in db.execute(f'PRAGMA table_info("{table}")')]:
+                    hit = db.execute(
+                        f'SELECT 1 FROM "{table}" WHERE REPLACE(CAST("{column}" AS TEXT), \' \', \'\') LIKE ? LIMIT 1',
+                        (f"%{text.replace(' ', '')}%",),
+                    ).fetchone()
+                    if hit:
+                        found.append(f"{table}.{column}")
+            return found
+        finally:
+            db.execute("ROLLBACK")
+
+
+def payments_card(card_id):
+    """The payments service's stored card, without its full number: {id, last4, expiry, name}, or None."""
+    found = _rows(
+        "payments",
+        "SELECT id, substr(card_number, -4) AS last4, expiry, name FROM cards WHERE id = ?",
+        (card_id,),
+    )
+    return found[0] if found else None
+
+
+def payments_card_count():
+    """How many cards the payments service holds."""
+    return _rows("payments", "SELECT COUNT(*) AS n FROM cards")[0]["n"]

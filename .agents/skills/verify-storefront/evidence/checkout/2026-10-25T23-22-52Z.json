@@ -1,0 +1,287 @@
+{
+  "check": "checkout",
+  "sub_features": [
+    "checkout.order-lines",
+    "checkout.pay",
+    "checkout.decline",
+    "checkout.clears-cart",
+    "checkout.empty-cart"
+  ],
+  "passed": false,
+  "reads": "what the user sees and stored state",
+  "steps": [
+    {
+      "name": "cart starts empty",
+      "passed": true,
+      "at": 0.51,
+      "sub_features": [],
+      "detail": "stored cart {}"
+    },
+    {
+      "name": "cart holds the test products",
+      "passed": true,
+      "at": 0.75,
+      "sub_features": [],
+      "detail": "stored cart {1: 2, 2: 1}, wanted {1: 2, 2: 1}"
+    },
+    {
+      "name": "the payment service saw the declined card",
+      "passed": true,
+      "at": 0.88,
+      "sub_features": [],
+      "detail": "new charges 1"
+    },
+    {
+      "name": "declined attempt leaves no paid order",
+      "passed": true,
+      "at": 0.88,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "orders from this attempt {3: 'declined'}"
+    },
+    {
+      "name": "declined card is reported on the checkout page",
+      "passed": true,
+      "at": 0.91,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "page /checkout, alert 'Your card was declined. Please try another card.'"
+    },
+    {
+      "name": "declined attempt leaves the cart as it was",
+      "passed": false,
+      "at": 0.97,
+      "sub_features": [
+        "checkout.decline"
+      ],
+      "detail": "stored cart {}, before {1: 2, 2: 1}",
+      "snapshot": {
+        "screenshot": "checkout/2026-10-25T23-22-52Z/declined-attempt-leaves-the-cart-as-it-was.png",
+        "text": "checkout/2026-10-25T23-22-52Z/declined-attempt-leaves-the-cart-as-it-was.txt"
+      }
+    },
+    {
+      "name": "checkout page shows the cart",
+      "passed": false,
+      "at": 1.04,
+      "sub_features": [],
+      "detail": "checkout page not shown; at /cart",
+      "snapshot": {
+        "screenshot": "checkout/2026-10-25T23-22-52Z/checkout-page-shows-the-cart.png",
+        "text": "checkout/2026-10-25T23-22-52Z/checkout-page-shows-the-cart.txt"
+      }
+    },
+    {
+      "name": "order stores the lines and total shown at checkout",
+      "passed": false,
+      "at": 1.09,
+      "sub_features": [
+        "checkout.order-lines"
+      ],
+      "detail": "expected one new order, found []",
+      "snapshot": {
+        "screenshot": "checkout/2026-10-25T23-22-52Z/order-stores-the-lines-and-total-shown-at-checkout.png",
+        "text": "checkout/2026-10-25T23-22-52Z/order-stores-the-lines-and-total-shown-at-checkout.txt"
+      }
+    },
+    {
+      "name": "paid order records a charge for its total",
+      "passed": false,
+      "at": 1.13,
+      "sub_features": [
+        "checkout.pay"
+      ],
+      "detail": "expected one new order, found []",
+      "snapshot": {
+        "screenshot": "checkout/2026-10-25T23-22-52Z/paid-order-records-a-charge-for-its-total.png",
+        "text": "checkout/2026-10-25T23-22-52Z/paid-order-records-a-charge-for-its-total.txt"
+      }
+    },
+    {
+      "name": "cart is empty after paying",
+      "passed": false,
+      "at": 1.17,
+      "sub_features": [
+        "checkout.clears-cart"
+      ],
+      "detail": "no paid order to follow; new orders []",
+      "snapshot": {
+        "screenshot": "checkout/2026-10-25T23-22-52Z/cart-is-empty-after-paying.png",
+        "text": "checkout/2026-10-25T23-22-52Z/cart-is-empty-after-paying.txt"
+      }
+    },
+    {
+      "name": "empty cart shows no payment form",
+      "passed": true,
+      "at": 1.2,
+      "sub_features": [
+        "checkout.empty-cart"
+      ],
+      "detail": "at /cart, Pay buttons 0, card number fields 0, cart empty True"
+    },
+    {
+      "name": "paying for an emptied cart stores no order and no charge",
+      "passed": true,
+      "at": 1.54,
+      "sub_features": [
+        "checkout.empty-cart"
+      ],
+      "detail": "Pay submitted: True (status 303); new orders [], new charges 0, now at /cart"
+    }
+  ],
+  "marks": [
+    {
+      "kind": "step",
+      "label": "Step 1: Customer empties the cart and fills it",
+      "at": 0.46
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart",
+      "at": 0.46
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 0.51
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.52
+    },
+    {
+      "kind": "action",
+      "label": "Back to the shop",
+      "at": 0.62
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 0.64
+    },
+    {
+      "kind": "action",
+      "label": "Back to the shop",
+      "at": 0.69
+    },
+    {
+      "kind": "action",
+      "label": "Adds Brass Pen",
+      "at": 0.7
+    },
+    {
+      "kind": "step",
+      "label": "Step 2: Customer pays with a card that is declined",
+      "at": 0.75
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Check out",
+      "at": 0.75
+    },
+    {
+      "kind": "action",
+      "label": "Pays with card ending 0002",
+      "at": 0.82
+    },
+    {
+      "kind": "step",
+      "label": "Step 3: Customer pays with a good card",
+      "at": 0.97
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 0.97
+    },
+    {
+      "kind": "step",
+      "label": "Step 4: Customer tries to check out an empty cart",
+      "at": 1.17
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page with an empty cart",
+      "at": 1.17
+    },
+    {
+      "kind": "action",
+      "label": "Opens the shop",
+      "at": 1.2
+    },
+    {
+      "kind": "action",
+      "label": "Adds Field Notebook",
+      "at": 1.21
+    },
+    {
+      "kind": "action",
+      "label": "Opens the checkout page",
+      "at": 1.26
+    },
+    {
+      "kind": "action",
+      "label": "Opens the cart in another tab",
+      "at": 1.31
+    },
+    {
+      "kind": "action",
+      "label": "Clicks Remove in another tab",
+      "at": 1.34
+    },
+    {
+      "kind": "action",
+      "label": "Pays in the first tab",
+      "at": 1.5
+    }
+  ],
+  "created": {
+    "orders": [
+      "3"
+    ]
+  },
+  "stopped": null,
+  "recording": {
+    "video": "checkout/2026-10-25T23-22-52Z/video.webm",
+    "starts_at": 0.39
+  },
+  "code": {
+    "storefront": {
+      "commit": "9883b1ab6a7b2b8c9c0eabb7e75cdfd6866be10c",
+      "branch": null,
+      "dirty": true,
+      "dirty_hash": "4d5a37805fbf6a2ad33b68c140025e8b9229e9dddfaa06a9d6242dc80acc9ffd",
+      "on_main": false
+    }
+  },
+  "harness_code": {
+    ".agents/skills/verify-storefront/scripts/checks/checkout.py": "bfeee193a5b18906dbb67ae6df218ecca9855b7dce45cdb48fe140b447322a7d",
+    ".agents/skills/verify-storefront/scripts/connection.py": "a476083ecb2b18e47e471e71084f686abcbf613c4df1cefa0402323779a56632",
+    ".agents/skills/verify-storefront/scripts/doctor.py": "4968f5e809dbb5f264f352592212f1d86946786fbcac3ccfcc0b7c5b7d811fc6",
+    ".agents/skills/verify-storefront/scripts/probe.py": "1da56dae7e9fffda5a363963aa147a6a6276201bd1510acbfcba056eae8e95d7",
+    ".agents/skills/verify-storefront/scripts/reads.py": "267d073a8952e84a707607e60ddaf0930668d02cf6494daef770a7028e148203",
+    ".agents/skills/verify-storefront/scripts/relaunch.sh": "1fa8df5bb9c3c0d7b623428c0d4108e37893a64df393b4d54272784bee1c07b9",
+    ".agents/skills/verify-storefront/scripts/report.py": "5ec499986eba34745ec791417d8e529ad740db65bd23907d3d30490153588973",
+    ".agents/skills/verify-storefront/scripts/screen.py": "de7993b40a6e4c2ba6e912e06be6d226e764d15014e2b2399dc0783772b243e4",
+    ".agents/skills/verify-storefront/scripts/serve.sh": "3c07384760fc472a6cd8a7e1dae2721804b2ebbedb5373c94a73df1a1aa3ac6e",
+    ".agents/skills/verify-storefront/scripts/shop_http.py": "691f0c34f1bb09c67cb8e291fddb89a467a1f230d08eb64cebebcbd99eaeb08e",
+    ".agents/skills/verify-storefront/settings.md": "3ef933480e21833b70e72fd0a10e837f5096c57702cf38dee026645bc0300def"
+  },
+  "doctor": {
+    "exit_code": 0,
+    "output": "payments: up, process 59945 in launched group 59933, port 8801, commit 9883b1a, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-ux2buvbd/data/payments.sqlite\nshop: up, process 59979 in launched group 59933, port 8800, commit 9883b1a, database /private/var/folders/hr/136df_0x7gs99n30bvfc5rgm0000gn/T/verify-break-storefront-ux2buvbd/data/shop.sqlite\nauth: none; the shop has one always signed-in customer\ncode: storefront 9883b1a on None, uncommitted changes 4d5a37805fbf, on default branch: False\nverify-storefront: ready"
+  },
+  "started_at": "2026-10-25T23:22:52Z",
+  "finished_at": "2026-10-25T23:22:54Z",
+  "planned_break": {
+    "what": "a declined card empties the cart",
+    "sub_features": [
+      "checkout.decline"
+    ],
+    "repo": "storefront"
+  },
+  "accepted_by": "vf.py run"
+}
