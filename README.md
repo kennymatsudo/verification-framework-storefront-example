@@ -1,5 +1,7 @@
 # Northwind Goods
 
+![Done, tests pass. Does it work? A verification comment finds a wrong charge; a recorded checkout run.](demo/readme-hero.gif)
+
 An example app for the [verification framework](https://github.com/kennymatsudo/verification-framework): what a coding agent's "done" looks like when a verification harness sits behind it.
 
 Two services, each with its own SQLite database: the shop (catalog, cart, checkout, orders) and a stand-in payment processor. A card ending in `0002` is always declined; any other number succeeds.
