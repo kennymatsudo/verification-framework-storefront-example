@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Saved cards · Northwind Goods{% endblock %}
+{% block content %}
+<h1>Saved cards</h1>
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if saved_cards %}
+<ul class="saved-cards">
+  {% for card in saved_cards %}
+  <li data-saved-card-id="{{ card.id }}" data-last4="{{ card.last4 }}" data-expiry="{{ card.expiry }}"{% if card.expired %} data-expired{% endif %}>
+    <span>Card ending {{ card.last4 }} · expires {{ card.expiry }}{% if card.expired %} <span class="status status-expired">Expired</span>{% endif %}</span>
+    <form method="post" action="/cards/remove">
+      <input type="hidden" name="saved_card_id" value="{{ card.id }}">
+      <button type="submit" class="link">Remove</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">No saved cards. You can save one when you check out.</p>
+{% endif %}
+{% endblock %}
