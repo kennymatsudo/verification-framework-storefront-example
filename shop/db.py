@@ -42,6 +42,15 @@ CREATE TABLE IF NOT EXISTS order_lines (
     quantity INTEGER NOT NULL,
     unit_price_cents INTEGER NOT NULL
 );
+-- The payments service keeps the card itself; the shop keeps only what it shows and the ID it charges by.
+CREATE TABLE IF NOT EXISTS saved_cards (
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL,
+    payments_card_id TEXT NOT NULL,
+    last4 TEXT NOT NULL,
+    expiry TEXT NOT NULL,
+    saved_at TEXT NOT NULL
+);
 """
 
 PRODUCTS = [
@@ -149,3 +158,24 @@ class Repository:
         return self.connection.execute(
             "SELECT * FROM orders WHERE customer_id = ? ORDER BY id DESC", (customer_id,)
         ).fetchall()
+
+    def saved_cards(self, customer_id: int) -> list[sqlite3.Row]:
+        return self.connection.execute(
+            "SELECT * FROM saved_cards WHERE customer_id = ? ORDER BY id", (customer_id,)
+        ).fetchall()
+
+    def saved_card(self, customer_id: int, card_id: int) -> sqlite3.Row | None:
+        return self.connection.execute(
+            "SELECT * FROM saved_cards WHERE customer_id = ? AND id = ?", (customer_id, card_id)
+        ).fetchone()
+
+    def save_card(self, customer_id: int, payments_card_id: str, last4: str, expiry: str) -> None:
+        self.connection.execute(
+            "INSERT INTO saved_cards (customer_id, payments_card_id, last4, expiry, saved_at) VALUES (?, ?, ?, ?, ?)",
+            (customer_id, payments_card_id, last4, expiry, datetime.now(timezone.utc).isoformat(timespec="seconds")),
+        )
+        self.connection.commit()
+
+    def remove_saved_card(self, customer_id: int, card_id: int) -> None:
+        self.connection.execute("DELETE FROM saved_cards WHERE customer_id = ? AND id = ?", (customer_id, card_id))
+        self.connection.commit()
