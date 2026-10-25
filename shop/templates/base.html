@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Northwind Goods{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Northwind Goods</a>
+    <nav>
+      <a href="/">Shop</a>
+      <a href="/orders">Orders</a>
+      <a href="/cart" class="cart-link">Cart <span class="badge" data-cart-count>{{ cart_count }}</span></a>
+    </nav>
+    <span class="customer">Signed in as {{ customer.name }}</span>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
