@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..dd2728839816530ca4b1bb00d8ea3de455027646 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -114,8 +114,6 @@ def create_app(
+             saved_card = repository.saved_card(customer_id, saved_card_id)
+             if saved_card is None:
+                 return render_checkout(request, lines, total_cents, "That card is no longer saved. Please choose another.")
+-            if card_expired(saved_card["expiry"], today()):
+-                return render_checkout(request, lines, total_cents, "That card has expired. Please use another card.")
+         elif not (card_number and expiry and name_on_card):
+             return render_checkout(request, lines, total_cents, "Please enter the name on the card, its number, and its expiry.")
+         elif save_card and parse_expiry(expiry) is None:

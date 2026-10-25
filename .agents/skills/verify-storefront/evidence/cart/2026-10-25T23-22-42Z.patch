@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..5dd0a8650165c8da5d4c28efbe5ff747cf463f2f 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -72,7 +72,7 @@ def create_app(
+     @app.get("/cart", response_class=HTMLResponse)
+     def cart(request: Request):
+         lines = request.app.state.repository.cart(customer_id)
+-        return render(request, "cart.html", lines=lines, total_cents=sum(line["line_cents"] for line in lines))
++        return render(request, "cart.html", lines=lines, total_cents=sum(line["price_cents"] for line in lines))
+ 
+     def saved_cards(repository: db.Repository) -> list[dict]:
+         return [

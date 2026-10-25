@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..e9384633be67e0ead6695526fa6ee7e2fdba9365 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -153,7 +153,7 @@ def create_app(
+         card = repository.saved_card(customer_id, saved_card_id)
+         if card is not None:
+             try:
+-                request.app.state.payments.forget_card(card["payments_card_id"])
++                pass
+             except PaymentsUnavailable:
+                 return render(
+                     request, "cards.html", saved_cards=saved_cards(repository),

@@ -1,0 +1,22 @@
+URL: http://127.0.0.1:8800/checkout
+
+Northwind Goods
+Shop
+Orders
+Saved cards
+Cart 0
+Signed in as Mira Okafor
+Checkout
+Order summary
+Field Notebook × 2	$36.00
+Brass Pen × 1	$42.00
+Total	$78.00
+Payment
+
+Your card was declined. Please try another card.
+
+Name on card
+Card number
+Expiry
+Save this card for later
+Pay $78.00

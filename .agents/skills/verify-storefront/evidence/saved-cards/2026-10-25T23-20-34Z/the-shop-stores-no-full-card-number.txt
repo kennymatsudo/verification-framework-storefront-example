@@ -1,0 +1,18 @@
+URL: http://127.0.0.1:8800/orders/18
+
+Northwind Goods
+Shop
+Orders
+Saved cards
+Cart 0
+Signed in as Mira Okafor
+Order #18
+
+Paid Thanks, Mira. Your payment went through.
+
+Field Notebook × 1	$18.00
+Total	$18.00
+
+Placed Oct 25, 2026 at 23:20 UTC · Payment ch_58ebff57f9e0
+
+Keep shopping
