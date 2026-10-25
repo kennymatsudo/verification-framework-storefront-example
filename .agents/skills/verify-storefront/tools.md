@@ -89,7 +89,7 @@ Help: `python3 .agents/skills/verify-storefront/scripts/probe.py --help`.
 
 ## Watch or share a recorded check run
 
-Use when: a check failed and you want to see it, or you want a clip of a run for a PR. The Checkout check records its browser; it keeps the video when the run fails or when `VERIFY_KEEP_RECORDING=1` is set for the run. `recordings.html` in this harness lists every check's latest run, with a Watch button where a video was kept.
+Use when: a check failed and you want to see it, or you want a clip of a run for a PR. The Checkout and Saved cards checks record their browser; they keep the video when the run fails or when `VERIFY_KEEP_RECORDING=1` is set for the run. A full-speed local run is over in seconds, so set `VERIFY_SLOW_MO_MS=400` too when the video is for people to watch. `recordings.html` in this harness lists every check's latest run, with a Watch button where a video was kept.
 
 Run from the project root:
 
@@ -112,7 +112,7 @@ Run from the project root:
 
 `python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` or `checks/saved_cards.py` in its place.
 
-- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout or Saved cards run's video.
+- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout or Saved cards run's video, and `VERIFY_SLOW_MO_MS=<ms>`, such as 400, to pause before every browser step so the video can be followed; it is off by default and changes pacing only.
 - Environment: an instance started with the Start command; the readiness check runs first. The Checkout and Saved cards checks need Playwright for Python and its Chromium in the system `python3`.
 - Permissions: local side effects only. All empty the signed-in customer's cart; Cart leaves two products in it, and Checkout and Saved cards leave paid and declined orders and their charges in the local databases. Saved cards removes the saved cards it created and leaves earlier ones alone.
 - Result: one PASS or FAIL line per step, and `vf.py run` writes the evidence under `evidence/cart/` or `evidence/checkout/` and refreshes `status.md`.

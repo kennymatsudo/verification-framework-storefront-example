@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..26b0673f8681bea0816dd67018285c559c438890 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -46,7 +46,7 @@ def create_app(
+         return templates.TemplateResponse(
+             request,
+             template,
+-            {"customer": repository.customer(customer_id), "cart_count": sum(line["quantity"] for line in cart), **context},
++            {"customer": repository.customer(customer_id), "cart_count": len(cart), **context},
+         )
+ 
+     @app.get("/health")
