@@ -60,10 +60,11 @@ def add(screen, product):
 
 
 def pay(screen, card_number):
-    page = screen.page
-    page.get_by_label("Card number").fill(card_number)
-    page.get_by_label("Expiry").fill(EXPIRY)
-    screen.act(f"Pays with card ending {card_number[-4:]}", lambda: page.get_by_role("button", name=re.compile(r"^Pay\b")).click())
+    """Pay with a typed card through the new-card form, which stays unique when saved cards add their own Pay buttons."""
+    form = screen.page.locator("form.card-form")
+    form.get_by_label("Card number").fill(card_number)
+    form.get_by_label("Expiry").fill(EXPIRY)
+    screen.act(f"Pays with card ending {card_number[-4:]}", lambda: form.get_by_role("button", name=re.compile(r"^Pay\b")).click())
 
 
 def seen_summary(page):
@@ -224,7 +225,7 @@ def run(report, screen):
         page.get_by_label("Expiry").fill(EXPIRY)
         report.mark("action", "Pays in the first tab")
         with page.expect_response(lambda res: res.request.method == "POST" and path_of(res) == "/checkout") as posted:
-            page.get_by_role("button", name=re.compile(r"^Pay\b")).click()
+            page.locator("form.card-form").get_by_role("button", name=re.compile(r"^Pay\b")).click()
         submitted = posted.value.status
         page.wait_for_load_state()
 

@@ -70,18 +70,18 @@ Run from the project root:
 
 Help: `.agents/skills/verify-storefront/scripts/relaunch.sh --help`.
 
-## What is in the cart, an order, or a charge right now?
+## What is in the cart, an order, a charge, or the saved cards right now?
 
 Use when: debugging the cart or checkout, or re-checking what a check judged. It reports stored state; it does not by itself prove a feature works.
 
 Run from the project root:
 
-`python3 .agents/skills/verify-storefront/scripts/probe.py cart`, `... probe.py order <order-id>`, or `... probe.py charge <charge-id>`
+`python3 .agents/skills/verify-storefront/scripts/probe.py cart`, `... probe.py order <order-id>`, `... probe.py charge <charge-id>`, or `... probe.py saved-cards`
 
-- Inputs: `cart` takes nothing; `order` takes the number from `/orders/<id>`; `charge` takes a payments ID such as `ch_1a2b3c4d5e6f`, which `order` shows. `--full` prints every stored column.
+- Inputs: `cart` and `saved-cards` take nothing; `order` takes the number from `/orders/<id>`; `charge` takes a payments ID such as `ch_1a2b3c4d5e6f`, which `order` shows. `--full` prints every stored column.
 - Environment: the shop and payments services running, since it finds each database through the service's `GET /health`. A relative path there resolves against the checkout the launch record names while its process is alive, or this repo otherwise.
 - Permissions: read-only. It opens the SQLite files each service's `/health` names (by default `data/shop.sqlite` and `data/payments.sqlite`; `STOREFRONT_DB` and `PAYMENTS_DB` change them) in read-only mode, in one read transaction per answer, and sends `GET /health`.
-- Result: exit 0 with one JSON object: the cart's lines (product ID and quantity) and unit count; an order's status, total, charge ID, placement time, and lines; a charge's status, amount, and card's last four digits. `next` lists follow-up probe commands. Values under keys that look like a secret, token, or password are redacted.
+- Result: exit 0 with one JSON object: the cart's lines (product ID and quantity) and unit count; an order's status, total, charge ID, placement time, and lines; a charge's status, amount, card's last four digits, and the saved card it was charged to, if any; the saved cards' shop ID, payments card ID, last four, expiry, and whether the payments service still holds each card (its full number is never printed). `next` lists follow-up probe commands. Values under keys that look like a secret, token, or password are redacted.
 - Failure: exit 1 with `{"not_found": ..., "hint": ...}` for an order or charge that isn't stored. Exit 2 with `STOPPED:` on stderr for a bad argument or when it can't read, such as a service that doesn't answer or a missing database file.
 - Limits: it reads storage, not what a page shows; a correct cart row can still render wrongly. The cart is the one always-signed-in customer's. Where each database lives comes from the app's own `/health` response; the rows themselves are read directly.
 
@@ -89,7 +89,7 @@ Help: `python3 .agents/skills/verify-storefront/scripts/probe.py --help`.
 
 ## Watch or share a recorded check run
 
-Use when: a check failed and you want to see it, or you want a clip of a run for a PR. The Checkout check records its browser; it keeps the video when the run fails or when `VERIFY_KEEP_RECORDING=1` is set for the run. `recordings.html` in this harness lists every check's latest run, with a Watch button where a video was kept.
+Use when: a check failed and you want to see it, or you want a clip of a run for a PR. The Checkout and Saved cards checks record their browser; they keep the video when the run fails or when `VERIFY_KEEP_RECORDING=1` is set for the run. A full-speed local run is over in seconds, so set `VERIFY_SLOW_MO_MS=400` too when the video is for people to watch. `recordings.html` in this harness lists every check's latest run, with a Watch button where a video was kept.
 
 Run from the project root:
 
@@ -104,19 +104,19 @@ Run from the project root:
 
 Help: `python3 .agents/skills/verify-storefront/scripts/framework/vf.py replay --help` and `python3 .agents/skills/verify-storefront/scripts/framework/vf.py clip --help`.
 
-## Prove the cart or checkout works
+## Prove the cart, checkout, or saved cards work
 
-Use when: a change touches the cart or checkout. Each check proves the behaviors its feature file maps to it (`features/cart.md`, `features/checkout.md`).
+Use when: a change touches the cart, checkout, or saved cards. Each check proves the behaviors its feature file maps to it (`features/cart.md`, `features/checkout.md`, `features/saved-cards.md`).
 
 Run from the project root:
 
-`python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` in its place.
+`python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` or `checks/saved_cards.py` in its place.
 
-- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout run's video.
-- Environment: an instance started with the Start command; the readiness check runs first. The Checkout check needs Playwright for Python and its Chromium in the system `python3`.
-- Permissions: local side effects only. Both empty the signed-in customer's cart; Cart leaves two products in it, and Checkout leaves a paid order, declined orders, and their charges in the local databases.
+- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout or Saved cards run's video, and `VERIFY_SLOW_MO_MS=<ms>`, such as 400, to pause before every browser step so the video can be followed; it is off by default and changes pacing only.
+- Environment: an instance started with the Start command; the readiness check runs first. The Checkout and Saved cards checks need Playwright for Python and its Chromium in the system `python3`.
+- Permissions: local side effects only. All empty the signed-in customer's cart; Cart leaves two products in it, and Checkout and Saved cards leave paid and declined orders and their charges in the local databases. Saved cards removes the saved cards it created and leaves earlier ones alone.
 - Result: one PASS or FAIL line per step, and `vf.py run` writes the evidence under `evidence/cart/` or `evidence/checkout/` and refreshes `status.md`.
 - Failure: exit 1 when a step failed, with what it found; exit 2 when the run stopped before a verdict, with the reason.
-- Limits: Cart reads served HTML, not a browser render. Neither covers the payments service being down, nor a cart changed in another tab before paying.
+- Limits: Cart reads served HTML, not a browser render. None covers the payments service being down, nor a cart changed in another tab before paying. Saved cards makes its expired card by typing a past expiry, which only the stand-in payments service accepts, and stops when a card ending 4444 or 1111 is already saved.
 
-Help: `python3 .agents/skills/verify-storefront/scripts/checks/cart.py --help` and `python3 .agents/skills/verify-storefront/scripts/checks/checkout.py --help`.
+Help: `python3 .agents/skills/verify-storefront/scripts/checks/cart.py --help`, `python3 .agents/skills/verify-storefront/scripts/checks/checkout.py --help`, and `python3 .agents/skills/verify-storefront/scripts/checks/saved_cards.py --help`.

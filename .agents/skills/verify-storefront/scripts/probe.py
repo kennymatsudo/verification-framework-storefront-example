@@ -4,6 +4,7 @@
   probe.py cart                 the signed-in customer's cart: each product and quantity, and the unit count
   probe.py order <order-id>     an order: status, total, charge ID, and its lines
   probe.py charge <charge-id>   the payments service's record of a charge: amount, status, card's last four
+  probe.py saved-cards          the customer's saved cards as the shop stores them, and whether payments holds each
 
 Read-only: it opens the shop and payments SQLite files in read-only mode, finding each through the service's
 GET /health, so the services must be running. It never imports the shop's code.
@@ -57,19 +58,26 @@ def answer(reads, question, ident, full):
             found = {k: found[k] for k in ("id", "status", "total_cents", "charge_id", "placed_at", "lines")}
         found["next"] = [f"{PROBE} charge {found['charge_id']}"] if found.get("charge_id") else []
         return found, None
+    if question == "saved-cards":
+        cards = []
+        for card in reads.saved_cards():
+            held = reads.payments_card(card["payments_card_id"])
+            shown = card if full else {k: card[k] for k in ("id", "payments_card_id", "last4", "expiry")}
+            cards.append({**shown, "payments_holds_card": held is not None})
+        return {"saved_cards": cards}, None
     if not ident:
         raise Stopped("charge needs a charge ID")
     found = reads.charge(ident)
     if found is None:
         return None, {"not_found": f"charge {ident}", "hint": f"charge IDs look like ch_ and 12 hex digits; {PROBE} order <id> shows an order's"}
     if not full:
-        found = {k: found[k] for k in ("id", "status", "amount_cents", "card_last4")}
+        found = {k: found[k] for k in ("id", "status", "amount_cents", "card_last4", "card_id")}
     return found, None
 
 
 def main():
     parser = Parser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("question", choices=["cart", "order", "charge"])
+    parser.add_argument("question", choices=["cart", "order", "charge", "saved-cards"])
     parser.add_argument("id", nargs="?", help="the order ID or charge ID")
     parser.add_argument("--full", action="store_true", help="print every stored column")
     try:

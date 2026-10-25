@@ -17,10 +17,35 @@
   <section class="payment">
     <h2>Payment</h2>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    {% if saved_cards %}
+    <h3>Saved cards</h3>
+    <ul class="saved-cards">
+      {% for card in saved_cards %}
+      <li data-saved-card-id="{{ card.id }}" data-last4="{{ card.last4 }}" data-expiry="{{ card.expiry }}"{% if card.expired %} data-expired{% endif %}>
+        <span>Card ending {{ card.last4 }} · expires {{ card.expiry }}{% if card.expired %} <span class="status status-expired">Expired</span>{% endif %}</span>
+        <span class="card-actions">
+          {% if not card.expired %}
+          <form method="post" action="/checkout">
+            <input type="hidden" name="saved_card_id" value="{{ card.id }}">
+            <button type="submit">Pay {{ total_cents | money }} with this card</button>
+          </form>
+          {% endif %}
+          <form method="post" action="/cards/remove">
+            <input type="hidden" name="saved_card_id" value="{{ card.id }}">
+            <input type="hidden" name="back" value="/checkout">
+            <button type="submit" class="link">Remove</button>
+          </form>
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    <h3>Or pay with a new card</h3>
+    {% endif %}
     <form method="post" action="/checkout" class="card-form">
       <label>Name on card <input name="name_on_card" required value="{{ customer.name }}"></label>
       <label>Card number <input name="card_number" required inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242"></label>
       <label>Expiry <input name="expiry" required placeholder="MM/YY" autocomplete="cc-exp"></label>
+      <label class="checkbox"><input type="checkbox" name="save_card" value="true"> Save this card for later</label>
       <button type="submit">Pay {{ total_cents | money }}</button>
     </form>
   </section>

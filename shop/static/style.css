@@ -48,11 +48,19 @@ table.lines tfoot th { border-bottom: 0; font-size: 16px; }
 .columns { display: grid; gap: 32px; grid-template-columns: 1fr 1fr; }
 @media (max-width: 640px) { .columns { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; gap: 12px; } }
 .card-form label { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
+.card-form label.checkbox { display: flex; align-items: center; gap: 8px; color: var(--ink); }
+.card-form label.checkbox input { width: auto; margin: 0; }
 .card-form input { display: block; width: 100%; margin-top: 4px; padding: 8px 10px; font: inherit; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); }
 .error { background: #fef2f2; color: var(--bad); border: 1px solid #fecaca; padding: 10px 12px; border-radius: 6px; }
 .status { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 13px; text-transform: capitalize; background: var(--line); }
 .status-paid { background: #dcfce7; color: var(--ok); }
 .status-pending { background: #fef3c7; color: var(--warn); }
-.status-declined, .status-failed { background: #fee2e2; color: var(--bad); }
+.status-declined, .status-failed, .status-expired { background: #fee2e2; color: var(--bad); }
 .lead { font-size: 18px; }
 .meta, .empty { color: var(--muted); }
+.saved-cards { list-style: none; padding: 0; margin: 0 0 16px; background: white; border: 1px solid var(--line); border-radius: 10px; }
+.saved-cards li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.saved-cards li:last-child { border-bottom: 0; }
+.saved-cards form { display: inline; }
+.card-actions { display: flex; align-items: center; gap: 12px; }
+h3 { font-size: 15px; margin: 12px 0 8px; }

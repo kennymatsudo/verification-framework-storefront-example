@@ -1,0 +1,13 @@
+diff --git a/shop/db.py b/shop/db.py
+index b713ca533d5a1bebebb04b4ad5fedcd5f5211efe..a85c364cb90f81091e300f8969214e0af7710f69 100644
+--- a/shop/db.py
++++ b/shop/db.py
+@@ -134,7 +134,7 @@ class Repository:
+         order_id = cursor.lastrowid
+         self.connection.executemany(
+             "INSERT INTO order_lines (order_id, product_id, name, quantity, unit_price_cents) VALUES (?, ?, ?, ?, ?)",
+-            [(order_id, line["id"], line["name"], line["quantity"], line["price_cents"]) for line in lines],
++            [(order_id, line["id"], line["name"], 1, line["price_cents"]) for line in lines],
+         )
+         self.connection.commit()
+         return order_id

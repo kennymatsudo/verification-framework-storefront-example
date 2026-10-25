@@ -14,3 +14,4 @@ See each check's latest run, and watch recorded ones, in [the recordings page](.
 
 - [Cart](cart.md): add, remove, cart total, header badge.
 - [Checkout](checkout.md): order matches the checkout page, paid order, declined card, cart emptied after paying, empty cart refused.
+- [Saved cards](saved-cards.md): save a card at checkout, pay with a saved card, expired cards refused, remove a card.

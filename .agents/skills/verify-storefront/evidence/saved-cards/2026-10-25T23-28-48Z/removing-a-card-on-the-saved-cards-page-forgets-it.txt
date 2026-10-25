@@ -1,0 +1,13 @@
+URL: http://127.0.0.1:8800/cards
+
+Northwind Goods
+Shop
+Orders
+Saved cards
+Cart 1
+Signed in as Mira Okafor
+Saved cards
+Card ending 5555555555554444 · expires 10/26
+Remove
+Card ending 4111111111111111 · expires 09/26 Expired
+Remove

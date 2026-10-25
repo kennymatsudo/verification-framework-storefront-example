@@ -1,0 +1,25 @@
+URL: http://127.0.0.1:8800/checkout
+
+Northwind Goods
+Shop
+Orders
+Saved cards
+Cart 1
+Signed in as Mira Okafor
+Checkout
+Order summary
+Field Notebook × 1	$18.00
+Total	$18.00
+Payment
+Saved cards
+Card ending 5555555555554444 · expires 10/26
+Pay $18.00 with this card
+Remove
+Card ending 4111111111111111 · expires 09/26 Expired
+Remove
+Or pay with a new card
+Name on card
+Card number
+Expiry
+Save this card for later
+Pay $18.00

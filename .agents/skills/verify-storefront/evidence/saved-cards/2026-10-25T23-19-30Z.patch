@@ -1,0 +1,13 @@
+diff --git a/shop/main.py b/shop/main.py
+index a41ab9d11e8a470d76e94d99425d9e6063339b9f..242002f9d3b41996290ae935a4c8f26207e25799 100644
+--- a/shop/main.py
++++ b/shop/main.py
+@@ -138,7 +138,7 @@ def create_app(
+         repository.set_order_status(order_id, "paid", charge.id)
+         if saved_card is None and save_card and charge.card_id:
+             year, month = parse_expiry(expiry)
+-            last4 = card_number.replace(" ", "")[-4:]
++            last4 = card_number.replace(" ", "")
+             repository.save_card(customer_id, charge.card_id, last4, f"{month:02d}/{year % 100:02d}")
+         repository.clear_cart(customer_id)
+         return RedirectResponse(f"/orders/{order_id}", status_code=303)

@@ -18,7 +18,13 @@ None yet.
 - Every stored-state read finds its database through the service's own `/health`, which names the file relative to the checkout the service runs from. The readiness check confirms each service runs from the launched checkout, but not that `/health` names the file the service actually writes.
 - checkout.empty-cart: the page step passes when the checkout page shows no payment form, whatever is shown instead, even an error page; the stale-tab step passes on any non-5xx answer that stored no order or charge. No requirement says where an empty-cart checkout should land, so neither asserts a route.
 - The Cart check reads the HTML the shop serves, not a browser's render; CSS or JavaScript could still hide a correct value.
+- saved-cards.expired: the running app is checked with a card expiring this month and one that expired last month, not on the exact last day or first day after. The day boundary is covered only by the shop's unit tests.
+- saved-cards.expired: the stale-form step posts the expired card's ID to `POST /checkout` from the browser context, since the page offers no button for it; it proves the server refuses the card, not how a real stale tab would look.
+- saved-cards.remove: the step that the page shows the card gone runs on the page the browser lands on, which is already that page before Remove; the stored reads in both databases carry the verdict.
 
 ## Untested cases
+
+- saved-cards.remove: the payments service being down while removing a card (the shop keeps the card and shows an error). Nothing in the harness stops one service on its own.
+- saved-cards.save: saving the same card twice stores two saved cards; no requirement says whether that should merge.
 
 - checkout.order-lines: a cart changed in another tab between opening the checkout page and pressing Pay. The developer left it out of scope on 2026-10-25; the shop stores the cart as it is at Pay time, so such an order would not match what that tab showed.
