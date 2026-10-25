@@ -56,3 +56,8 @@ table.lines tfoot th { border-bottom: 0; font-size: 16px; }
 .status-declined, .status-failed { background: #fee2e2; color: var(--bad); }
 .lead { font-size: 18px; }
 .meta, .empty { color: var(--muted); }
+.code-form { display: flex; gap: 8px; align-items: end; margin-top: 12px; flex-wrap: wrap; }
+.code-form label { font-size: 14px; color: var(--muted); }
+.code-form input { display: block; margin-top: 4px; padding: 8px 10px; font: inherit; border: 1px solid var(--line); border-radius: 6px; }
+button.secondary { background: white; color: var(--accent); border: 1px solid var(--accent); }
+.code-form .error { width: 100%; margin: 4px 0 0; }

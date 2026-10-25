@@ -21,6 +21,12 @@ Expected behavior lives here, not in the code. Each item has an ID so checks and
 - **CO-4** After a paid order, the cart is empty.
 - **CO-5** An empty cart cannot be checked out.
 
+## Discount codes
+
+- **DC-1** A valid discount code entered at checkout takes its percentage off the subtotal. The checkout page shows the subtotal, the discount, and the reduced total, and the stored order records the code, the discount, and the reduced total.
+- **DC-2** The amount charged to the card equals the reduced total.
+- **DC-3** An unknown code is rejected with a message and no discount is applied.
+
 ## Orders
 
 - **OR-1** The orders page lists the customer's orders, newest first, each with its status and total.

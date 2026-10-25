@@ -2,11 +2,32 @@
 
 import os
 import sqlite3
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
 DEFAULT_PATH = Path(os.environ.get("STOREFRONT_DB", "data/shop.sqlite"))
 DEMO_CUSTOMER = 1
+
+# Discount codes and the percentage they take off the order. A table in the database would let staff add codes
+# without a deploy; for now the marketing team has two.
+DISCOUNT_CODES = {"WELCOME10": 10, "FRIENDS20": 20}
+
+
+@dataclass
+class Discount:
+    code: str
+    percent: int
+    cents: int
+
+
+def discount_for(code: str | None, subtotal_cents: int) -> Discount | None:
+    """The discount a code earns on a subtotal, or None when the code is blank or unknown."""
+    code = (code or "").strip().upper()
+    if code not in DISCOUNT_CODES:
+        return None
+    percent = DISCOUNT_CODES[code]
+    return Discount(code=code, percent=percent, cents=subtotal_cents * percent // 100)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS products (
@@ -32,6 +53,8 @@ CREATE TABLE IF NOT EXISTS orders (
     customer_id INTEGER NOT NULL,
     status TEXT NOT NULL,
     total_cents INTEGER NOT NULL,
+    discount_code TEXT,
+    discount_cents INTEGER NOT NULL DEFAULT 0,
     charge_id TEXT,
     placed_at TEXT NOT NULL
 );
@@ -117,10 +140,19 @@ class Repository:
         self.connection.execute("DELETE FROM cart_items WHERE customer_id = ?", (customer_id,))
         self.connection.commit()
 
-    def create_order(self, customer_id: int, lines: list[sqlite3.Row], total_cents: int) -> int:
+    def create_order(
+        self, customer_id: int, lines: list[sqlite3.Row], total_cents: int, discount: "Discount | None" = None
+    ) -> int:
         cursor = self.connection.execute(
-            "INSERT INTO orders (customer_id, status, total_cents, placed_at) VALUES (?, 'pending', ?, ?)",
-            (customer_id, total_cents, datetime.now(timezone.utc).isoformat(timespec="seconds")),
+            """INSERT INTO orders (customer_id, status, total_cents, discount_code, discount_cents, placed_at)
+               VALUES (?, 'pending', ?, ?, ?, ?)""",
+            (
+                customer_id,
+                total_cents,
+                discount.code if discount else None,
+                discount.cents if discount else 0,
+                datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            ),
         )
         order_id = cursor.lastrowid
         self.connection.executemany(
