@@ -104,19 +104,19 @@ Run from the project root:
 
 Help: `python3 .agents/skills/verify-storefront/scripts/framework/vf.py replay --help` and `python3 .agents/skills/verify-storefront/scripts/framework/vf.py clip --help`.
 
-## Prove the cart or checkout works
+## Prove the cart, checkout, or discount codes work
 
-Use when: a change touches the cart or checkout. Each check proves the behaviors its feature file maps to it (`features/cart.md`, `features/checkout.md`).
+Use when: a change touches the cart, checkout, or discount codes. Each check proves the behaviors its feature file maps to it (`features/cart.md`, `features/checkout.md`, `features/discounts.md`).
 
 Run from the project root:
 
-`python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` in its place.
+`python3 .agents/skills/verify-storefront/scripts/framework/vf.py run -- python3 .agents/skills/verify-storefront/scripts/checks/cart.py`, or `checks/checkout.py` or `checks/discount.py` in its place.
 
-- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout run's video.
-- Environment: an instance started with the Start command; the readiness check runs first. The Checkout check needs Playwright for Python and its Chromium in the system `python3`.
-- Permissions: local side effects only. Both empty the signed-in customer's cart; Cart leaves two products in it, and Checkout leaves a paid order, declined orders, and their charges in the local databases.
-- Result: one PASS or FAIL line per step, and `vf.py run` writes the evidence under `evidence/cart/` or `evidence/checkout/` and refreshes `status.md`.
+- Inputs: none. Set `VERIFY_KEEP_RECORDING=1` to keep a passing Checkout or Discount run's video.
+- Environment: an instance started with the Start command; the readiness check runs first. The Checkout and Discount checks need Playwright for Python and its Chromium in the system `python3`.
+- Permissions: local side effects only. All empty the signed-in customer's cart; Cart leaves two products in it, Checkout leaves a paid order, declined orders, and their charges, and Discount leaves one discounted paid order and its charge in the local databases.
+- Result: one PASS or FAIL line per step, and `vf.py run` writes the evidence under `evidence/cart/`, `evidence/checkout/`, or `evidence/discount/` and refreshes `status.md`.
 - Failure: exit 1 when a step failed, with what it found; exit 2 when the run stopped before a verdict, with the reason.
-- Limits: Cart reads served HTML, not a browser render. Neither covers the payments service being down, nor a cart changed in another tab before paying.
+- Limits: Cart reads served HTML, not a browser render. None covers the payments service being down, nor a cart changed in another tab before paying. Discount tries only WELCOME10, not FRIENDS20 or an unknown code.
 
-Help: `python3 .agents/skills/verify-storefront/scripts/checks/cart.py --help` and `python3 .agents/skills/verify-storefront/scripts/checks/checkout.py --help`.
+Help: `python3 .agents/skills/verify-storefront/scripts/checks/cart.py --help`, `python3 .agents/skills/verify-storefront/scripts/checks/checkout.py --help`, and `python3 .agents/skills/verify-storefront/scripts/checks/discount.py --help`.

@@ -14,3 +14,4 @@ See each check's latest run, and watch recorded ones, in [the recordings page](.
 
 - [Cart](cart.md): add, remove, cart total, header badge.
 - [Checkout](checkout.md): order matches the checkout page, paid order, declined card, cart emptied after paying, empty cart refused.
+- [Discount codes](discounts.md): code shown and stored on the order, card charged the reduced total.

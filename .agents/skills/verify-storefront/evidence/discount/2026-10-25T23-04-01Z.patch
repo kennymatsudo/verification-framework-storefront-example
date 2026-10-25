@@ -1,0 +1,12 @@
+diff --git a/shop/templates/checkout.html b/shop/templates/checkout.html
+index a8e6b4781a63b1e3041aa129038b183e663e1ee7..97080ac4ba599a63b95e7fc8d6fcd1948c3a7d89 100644
+--- a/shop/templates/checkout.html
++++ b/shop/templates/checkout.html
+@@ -32,7 +32,6 @@
+       <label>Name on card <input name="name_on_card" required value="{{ customer.name }}"></label>
+       <label>Card number <input name="card_number" required inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242"></label>
+       <label>Expiry <input name="expiry" required placeholder="MM/YY" autocomplete="cc-exp"></label>
+-      <input type="hidden" name="code" value="{{ code }}">
+       <button type="submit">Pay {{ total_cents | money }}</button>
+     </form>
+   </section>

@@ -11,7 +11,11 @@
 
 ## Known failing checks
 
-None yet.
+- discount.charged fails at f1dd5de (PR #2): a WELCOME10 order is stored at the reduced total but the card is charged the full subtotal, because `place_order` passes the subtotal to the payments service. Issue #1 criterion 3 and DC-2 require the reduced total. The check passes on a scratch fix that charges the reduced total.
+
+## Untested discount cases
+
+- FRIENDS20 and an unknown code are not driven end to end; DC-3 is left to the shop's unit tests. A code applied after the cart changes in another tab is not covered.
 
 ## Where a pass can mislead
 
