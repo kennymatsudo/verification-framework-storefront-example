@@ -9,8 +9,8 @@ echo "== session replay"; demo/replay.py hero
 echo "== stills"; python3 demo/stills.py
 echo "== remotion"
 (cd demo/video && [ -d node_modules ] || npm install --no-audit --no-fund)
-(cd demo/video && npx remotion render src/index.ts Demo ../out/demo.mp4 --log=error)
-(cd demo/video && npx remotion render src/index.ts ReadmeHero ../out/readme-hero.mp4 --log=error)
+(cd demo/video && npx remotion render src/index.ts Demo ../out/demo.mp4 --log=error --concurrency=1 --port=3417 --timeout=120000)
+(cd demo/video && npx remotion render src/index.ts ReadmeHero ../out/readme-hero.mp4 --log=error --concurrency=1 --port=3417 --timeout=120000)
 echo "== readme gif"
 rm -rf demo/out/readme-frames && mkdir -p demo/out/readme-frames
 ffmpeg -v error -y -i demo/out/readme-hero.mp4 -vf "fps=12,scale=960:-1" demo/out/readme-frames/f%04d.png
