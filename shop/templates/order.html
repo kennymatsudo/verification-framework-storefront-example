@@ -12,7 +12,12 @@
     <tr><td>{{ line.name }} × {{ line.quantity }}</td><td>{{ line.line_cents | money }}</td></tr>
     {% endfor %}
   </tbody>
-  <tfoot><tr><th>Total</th><th data-order-total>{{ order.total_cents | money }}</th></tr></tfoot>
+  <tfoot>
+    {% if order.discount_code %}
+    <tr><td>Discount {{ order.discount_code }}</td><td data-discount>−{{ order.discount_cents | money }}</td></tr>
+    {% endif %}
+    <tr><th>Total</th><th data-order-total>{{ order.total_cents | money }}</th></tr>
+  </tfoot>
 </table>
 <p class="meta">Placed {{ order.placed_at | when }}{% if order.charge_id %} · Payment {{ order.charge_id }}{% endif %}</p>
 <p><a href="/">Keep shopping</a></p>

@@ -64,12 +64,24 @@ def create_app(repository: db.Repository | None = None, payments: PaymentsClient
         lines = request.app.state.repository.cart(customer_id)
         return render(request, "cart.html", lines=lines, total_cents=sum(line["line_cents"] for line in lines))
 
+    def checkout_context(lines, code: str | None):
+        subtotal_cents = sum(line["line_cents"] for line in lines)
+        discount = db.discount_for(code, subtotal_cents)
+        return {
+            "lines": lines,
+            "subtotal_cents": subtotal_cents,
+            "discount": discount,
+            "code": code or "",
+            "code_rejected": bool(code) and discount is None,
+            "total_cents": subtotal_cents - (discount.cents if discount else 0),
+        }
+
     @app.get("/checkout", response_class=HTMLResponse)
-    def checkout(request: Request):
+    def checkout(request: Request, code: str | None = None):
         lines = request.app.state.repository.cart(customer_id)
         if not lines:
             return RedirectResponse("/cart", status_code=303)
-        return render(request, "checkout.html", lines=lines, total_cents=sum(line["line_cents"] for line in lines))
+        return render(request, "checkout.html", **checkout_context(lines, code))
 
     @app.post("/checkout", response_class=HTMLResponse)
     def place_order(
@@ -77,25 +89,27 @@ def create_app(repository: db.Repository | None = None, payments: PaymentsClient
         card_number: str = Form(),
         expiry: str = Form(),
         name_on_card: str = Form(),
+        code: str = Form(""),
     ):
         repository = request.app.state.repository
         lines = repository.cart(customer_id)
         if not lines:
             return RedirectResponse("/cart", status_code=303)
-        total_cents = sum(line["line_cents"] for line in lines)
-        order_id = repository.create_order(customer_id, lines, total_cents)
+        context = checkout_context(lines, code)
+        subtotal_cents, total_cents = context["subtotal_cents"], context["total_cents"]
+        order_id = repository.create_order(customer_id, lines, total_cents, context["discount"])
         try:
-            charge = request.app.state.payments.charge(total_cents, card_number, expiry, name_on_card)
+            charge = request.app.state.payments.charge(subtotal_cents, card_number, expiry, name_on_card)
         except PaymentsUnavailable:
             repository.set_order_status(order_id, "failed")
             return render(
-                request, "checkout.html", lines=lines, total_cents=total_cents,
+                request, "checkout.html", **context,
                 error="We couldn't reach the payment service. Your card was not charged.",
             )
         if charge.status != "succeeded":
             repository.set_order_status(order_id, "declined", charge.id)
             return render(
-                request, "checkout.html", lines=lines, total_cents=total_cents,
+                request, "checkout.html", **context,
                 error="Your card was declined. Please try another card.",
             )
         repository.set_order_status(order_id, "paid", charge.id)

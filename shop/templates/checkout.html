@@ -11,8 +11,19 @@
         <tr><td>{{ line.name }} × {{ line.quantity }}</td><td>{{ line.line_cents | money }}</td></tr>
         {% endfor %}
       </tbody>
-      <tfoot><tr><th>Total</th><th data-order-total>{{ total_cents | money }}</th></tr></tfoot>
+      <tfoot>
+        {% if discount %}
+        <tr><td>Subtotal</td><td data-subtotal>{{ subtotal_cents | money }}</td></tr>
+        <tr><td>Discount {{ discount.code }} ({{ discount.percent }}% off)</td><td data-discount>−{{ discount.cents | money }}</td></tr>
+        {% endif %}
+        <tr><th>Total</th><th data-order-total>{{ total_cents | money }}</th></tr>
+      </tfoot>
     </table>
+    <form method="get" action="/checkout" class="code-form">
+      <label>Discount code <input name="code" value="{{ code }}" placeholder="WELCOME10"></label>
+      <button type="submit" class="secondary">Apply</button>
+      {% if code_rejected %}<p class="error" role="alert">That code isn't valid.</p>{% endif %}
+    </form>
   </section>
   <section class="payment">
     <h2>Payment</h2>
@@ -21,6 +32,7 @@
       <label>Name on card <input name="name_on_card" required value="{{ customer.name }}"></label>
       <label>Card number <input name="card_number" required inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242"></label>
       <label>Expiry <input name="expiry" required placeholder="MM/YY" autocomplete="cc-exp"></label>
+      <input type="hidden" name="code" value="{{ code }}">
       <button type="submit">Pay {{ total_cents | money }}</button>
     </form>
   </section>
