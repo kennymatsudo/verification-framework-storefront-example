@@ -18,7 +18,7 @@ This repo is the public demo of the verification framework. It exists to show on
 - The verification harness, built by the framework's own setup, not by hand, and committed with its evidence and recordings.
 - `demo/`, the scripts that run and capture every scene so the demo re-renders when the app or the skills change.
 
-Hidden breaks and the answer sheet for the agent's questions live in a private companion repo until the demo is filmed and graded. They are published afterward with the grading result.
+Hidden breaks and the answer sheet for the agent's questions lived in a private companion repo until the demo was graded. They are now public with the grading result at [verification-framework-storefront-hidden-breaks](https://github.com/kennymatsudo/verification-framework-storefront-hidden-breaks).
 
 ## Build order
 
@@ -30,6 +30,8 @@ Each slice is checkable on its own.
 4. The two teammate PRs, verified through the framework. Done when both comments are on GitHub.
 5. The hero run, as a real agent session captured by the demo scripts. Done when the agent verifies before reporting done and opens the PR with its comment and clip.
 6. The public surface: recordings on GitHub Pages, a README that tells the story, the hidden breaks published with their grading.
+
+All six slices were finished on 25 October 2026: PRs #2, #3, and #4 carry their comments, nine of ten hidden breaks were caught, the recordings page is on GitHub Pages, and the full cut is the `demo-2026-10-25` release.
 
 ## Finish condition
 
