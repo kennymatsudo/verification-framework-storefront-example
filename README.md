@@ -17,7 +17,7 @@ What the shop must do is in [REQUIREMENTS.md](REQUIREMENTS.md). Nothing else is 
 
 ## What to look at
 
-Everything below was produced by agent sessions run from this repo, with a person answering the agent's questions. The sessions are driven by `demo/session.py`; the storyboard is in [demo/storyboard.md](demo/storyboard.md) and the plan in [docs/plan.md](docs/plan.md).
+A [three-and-a-half-minute cut](https://github.com/kennymatsudo/verification-framework-storefront-example/releases/download/demo-2026-10-25/demo.mp4) walks through all of it. Everything below was produced by agent sessions run from this repo, with a person answering the agent's questions. The sessions are driven by `demo/session.py`; the storyboard is in [demo/storyboard.md](demo/storyboard.md) and the plan in [docs/plan.md](docs/plan.md).
 
 - **A teammate's PR with green tests and a real bug: [#2 Add discount codes at checkout](https://github.com/kennymatsudo/verification-framework-storefront-example/pull/2).** The unit tests pass. The verification comment on the PR found that the card is charged the full price while the order is stored discounted, by reading the payments service's own ledger, and found a database migration gap no test covered. It carries a clip of the run and says which planned break each check was shown to fail on. The check and its run records are on branch `vf-verify-pr/2-checks`.
 - **A PR the harness had nothing to add to: [#3 Show an estimated delivery date](https://github.com/kennymatsudo/verification-framework-storefront-example/pull/3).** The shop alone decides the date, so the comment says the unit tests are its home, reruns the existing checks to catch regressions, and raises a time-zone ambiguity in the requirement.
@@ -28,4 +28,4 @@ The harness was built by the framework's own setup, not by hand. Claude Code rea
 
 ## Grading the checks
 
-After the agent built the cart and checkout checks, they were run against ten deliberate bugs the agent never saw, kept in a separate repo. Nine were caught; the tenth was in a feature outside the agreed scope. The breaks and the grader are published alongside this repo once the demo is complete.
+After the agent built the cart and checkout checks, they were run against ten deliberate bugs the agent never saw, kept in a separate repo. Nine were caught; the tenth was in a feature outside the agreed scope. The breaks, the answer sheet, and the grader are in [verification-framework-storefront-hidden-breaks](https://github.com/kennymatsudo/verification-framework-storefront-hidden-breaks).
